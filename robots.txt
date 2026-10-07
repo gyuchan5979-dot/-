@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /thanks.html
+Disallow: /_build/
+
+Sitemap: https://londoncurtain.co.kr/sitemap.xml
