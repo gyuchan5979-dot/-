@@ -9,6 +9,7 @@ export const PET_AREA_LABEL: Record<PetArea, string> = {
 };
 
 export const SOURCE_LABEL: Record<string, string> = {
+  fsk: '식약처 등록 업소 현황',
   kcisa: '한국문화정보원',
   tourapi: '한국관광공사',
   user: '사용자 제보',

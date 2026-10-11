@@ -42,6 +42,20 @@ npm run dev
 - 카카오맵 키가 없으면 지도 탭에 안내 문구만 나오고, 목록 기능은 그대로 동작해요.
 - 카카오 개발자 콘솔에서 JavaScript 키의 사이트 도메인에 `http://localhost:5173`과 실제 서비스 도메인을 등록해야 지도가 떠요.
 
+## 식약처 등록 업소 (가장 최신·공식)
+
+2026년 3월 시행된 「반려동물 동반출입 음식점」 제도로 지자체에 등록한 업소 목록이에요. 식품안전나라 [반려동물 동반 가능 업소 현황](https://www.foodsafetykorea.go.kr/portal/petKorea.do) 페이지의 표(업소명·업종·주소)를 읽어요. 앱에서는 **✓ 식약처 등록** 배지로 표시하고, 같은 가게가 여러 출처에 있으면 이 정보를 가장 우선해요.
+
+```bash
+npm run data:fsk                         # 키 없이: OSM Nominatim (초당 1건, 번지까지 맞은 주소만 사용)
+KAKAO_REST_KEY='키' npm run data:fsk     # 카카오 주소 검색: 더 많이·정확하게
+```
+
+- 목록에 좌표가 없어서 주소를 좌표로 바꿔요. 결과는 `data/geocode-cache.json`에 저장돼서, 다시 실행하면 새로 추가된 업소만 변환해요.
+- Nominatim은 "○○로 607"을 "○○로" 도로 전체로 찾는 경우가 많아서(핀이 수 km 틀어짐), 번지·건물까지 맞은 결과만 써요. 그래서 일부 업소는 빠져요. 카카오 키로 다시 실행하면 빠진 업소를 채워요.
+- 목록에는 크기 제한 같은 조건이 없어서 "가게에 문의"로 표시해요.
+- 클라우드 환경 등 프록시 뒤에서 실행할 때는 `NODE_USE_ENV_PROXY=1`을 앞에 붙이세요.
+
 ## 한국관광공사 데이터 추가 (TourAPI)
 
 한국관광공사 「반려동물 동반여행 서비스」에서 음식점(카페 포함)을 받아 합쳐요.
@@ -99,6 +113,7 @@ npx ait deploy
 | `src/components/PlaceDetail.tsx` | 상세 바텀시트, 카카오맵 길찾기 |
 | `src/lib/places.ts` | 위치 주변 격자의 데이터만 불러오기 (없으면 샘플) |
 | `scripts/convert-places.mjs` | 한국문화정보원 CSV → `data/sources/kcisa.json` |
+| `scripts/fetch-fsk.mjs` | 식약처 등록 업소 → 좌표 변환 → `data/sources/fsk.json` |
 | `scripts/fetch-tourapi.mjs` | 한국관광공사 API → `data/sources/tourapi.json` |
 | `scripts/build-places.mjs` | `data/sources/*` 합치고 중복 제거 → `public/places/` |
 | `src/lib/reports.ts`, `supabase/schema.sql` | 사용자 제보 저장·조회 |
@@ -110,6 +125,8 @@ npx ait deploy
 - [x] 실제 CSV 변환 결과 커밋 (2025-03-24판 → 식당·카페 821곳)
 - [ ] 데이터 보강: 대부분 2022-11 작성이고 식당이 15곳뿐이라, 사용자 제보·다른 출처가 필요해요
 - [x] "정보가 달라요" 신고와 새 장소 제보 (Supabase)
+- [x] 식약처 등록 업소 (Nominatim으로 좌표 변환된 곳만)
+- [ ] 카카오 REST 키로 `npm run data:fsk` 다시 실행해 빠진 업소 채우기
 - [ ] TourAPI 키 발급 후 `npm run data:tourapi` 실행
 - [ ] Supabase 프로젝트 만들고 키 연결
 - [ ] 토스 광고 연동

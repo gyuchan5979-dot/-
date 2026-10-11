@@ -148,6 +148,7 @@ export default function App() {
                     {p.category === 'cafe' ? '카페' : '식당'} · {p.address}
                   </div>
                   <div className="tags">
+                    {p.official && <span className="tag tag-official">✓ 식약처 등록</span>}
                     <span className={`tag tag-${p.petArea}`}>{PET_AREA_LABEL[p.petArea]}</span>
                     {p.largeDogOk && <span className="tag tag-large">대형견 OK</span>}
                     {p.amenities.slice(0, 2).map((a) => (

@@ -57,7 +57,7 @@ export function mergeSources(sources) {
 }
 
 /** data/sources/*.json 읽기. 파일 이름 순서가 아니라 PRIORITY 순서로 합쳐요. */
-const PRIORITY = ['tourapi', 'kcisa'];
+const PRIORITY = ['fsk', 'tourapi', 'kcisa'];
 
 export function readSources(sourcesDir) {
   let files = [];

@@ -37,6 +37,12 @@ export function PlaceDetail({ place, onClose, onToast }: Props) {
         {place.category === 'cafe' ? '카페' : '식당'} · {formatDistance(place.distanceM)} · {place.address}
       </p>
 
+      {place.official && (
+        <p className="official-note">
+          ✓ 식약처 「반려동물 동반출입 음식점」으로 지자체에 등록된 곳이에요.
+        </p>
+      )}
+
       <dl className="facts">
         <div>
           <dt>동반 범위</dt>

@@ -21,8 +21,10 @@ export interface Place {
   restriction?: string;
   /** 동반 가능 여부를 마지막으로 확인한 날짜 (YYYY-MM-DD) */
   verifiedAt?: string;
-  /** 데이터 출처: kcisa(한국문화정보원), tourapi(한국관광공사), user(사용자 제보) */
+  /** 데이터 출처: fsk(식약처), kcisa(한국문화정보원), tourapi(한국관광공사), user(사용자 제보) */
   source?: string;
+  /** 식약처 「반려동물 동반출입 음식점」으로 지자체에 등록된 곳 */
+  official?: boolean;
 }
 
 export interface Coords {

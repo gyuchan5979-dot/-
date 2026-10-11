@@ -12,7 +12,8 @@
     "data:convert": "node scripts/convert-places.mjs",
     "test": "vitest run",
     "data:build": "node scripts/build-places.mjs",
-    "data:tourapi": "node scripts/fetch-tourapi.mjs"
+    "data:tourapi": "node scripts/fetch-tourapi.mjs",
+    "data:fsk": "node scripts/fetch-fsk.mjs"
   },
   "dependencies": {
     "@apps-in-toss/web-framework": "^3.8.0",
