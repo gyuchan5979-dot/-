@@ -32,15 +32,23 @@ export function PlaceDetail({ place, onClose }: Props) {
             <dd>{PET_AREA_LABEL[place.petArea]}</dd>
           </div>
           <div>
-            <dt>대형견</dt>
-            <dd>{place.largeDogOk ? '가능' : '불가 (소·중형견만)'}</dd>
+            <dt>입장 가능 크기</dt>
+            <dd>{place.sizeNote ?? (place.largeDogOk ? '가능' : '불가 (소·중형견만)')}</dd>
           </div>
+          {place.restriction && (
+            <div>
+              <dt>제한사항</dt>
+              <dd>{place.restriction}</dd>
+            </div>
+          )}
+          {place.amenities.length > 0 && (
+            <div>
+              <dt>편의</dt>
+              <dd>{place.amenities.join(', ')}</dd>
+            </div>
+          )}
           <div>
-            <dt>편의</dt>
-            <dd>{place.amenities.length > 0 ? place.amenities.join(', ') : '정보 없음'}</dd>
-          </div>
-          <div>
-            <dt>마지막 확인</dt>
+            <dt>정보 작성일</dt>
             <dd>{place.verifiedAt ?? '확인 기록 없음'}</dd>
           </div>
         </dl>

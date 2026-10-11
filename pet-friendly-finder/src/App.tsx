@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { KakaoMap } from './components/KakaoMap';
 import { PlaceDetail } from './components/PlaceDetail';
-import { SAMPLE_PLACES } from './data/samplePlaces';
 import { distanceMeters, formatDistance } from './lib/geo';
 import { getMyLocation, type LocationResult } from './lib/location';
+import { loadPlacesNear, type PlacesResult } from './lib/places';
 import { PET_AREA_LABEL } from './labels';
 import type { Category, PlaceWithDistance } from './types';
 
 const RADIUS_OPTIONS = [1000, 3000, 5000] as const;
+const MAX_RADIUS = RADIUS_OPTIONS[RADIUS_OPTIONS.length - 1];
+/** 목록에 한 번에 그리는 최대 개수 */
+const LIST_LIMIT = 100;
 
 type CategoryFilter = 'all' | Category;
 
@@ -19,6 +22,7 @@ export default function App() {
   const [indoorOnly, setIndoorOnly] = useState(false);
   const [view, setView] = useState<'list' | 'map'>('list');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [data, setData] = useState<PlacesResult | null>(null);
 
   const refreshLocation = useCallback(() => {
     setLocation(null);
@@ -29,15 +33,27 @@ export default function App() {
     getMyLocation().then(setLocation);
   }, []);
 
+  // 위치가 정해지면 가장 넓은 반경 기준으로 한 번 불러오고, 반경 변경은 화면에서 거르기만 해요.
+  useEffect(() => {
+    if (!location) return;
+    let cancelled = false;
+    loadPlacesNear(location.coords, MAX_RADIUS).then((result) => {
+      if (!cancelled) setData(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [location]);
+
   const places = useMemo<PlaceWithDistance[]>(() => {
-    if (!location) return [];
-    return SAMPLE_PLACES.map((p) => ({ ...p, distanceM: distanceMeters(location.coords, p) }))
+    if (!location || !data) return [];
+    return data.places.map((p) => ({ ...p, distanceM: distanceMeters(location.coords, p) }))
       .filter((p) => p.distanceM <= radius)
       .filter((p) => category === 'all' || p.category === category)
       .filter((p) => !largeDogOnly || p.largeDogOk)
       .filter((p) => !indoorOnly || p.petArea === 'indoor')
       .sort((a, b) => a.distanceM - b.distanceM);
-  }, [location, radius, category, largeDogOnly, indoorOnly]);
+  }, [location, data, radius, category, largeDogOnly, indoorOnly]);
 
   const selected = places.find((p) => p.id === selectedId) ?? null;
 
@@ -67,7 +83,7 @@ export default function App() {
 
       <div className="tabs" role="tablist">
         <button role="tab" aria-selected={view === 'list'} onClick={() => setView('list')}>
-          목록 {location && <span className="count">{places.length}</span>}
+          목록 {data && <span className="count">{places.length}</span>}
         </button>
         <button role="tab" aria-selected={view === 'map'} onClick={() => setView('map')}>
           지도
@@ -77,6 +93,8 @@ export default function App() {
       <main>
         {!location ? (
           <p className="empty">📍 현재 위치를 확인하고 있어요…</p>
+        ) : !data ? (
+          <p className="empty">🐾 주변 가게를 불러오고 있어요…</p>
         ) : view === 'map' ? (
           <KakaoMap
             center={location.coords}
@@ -95,7 +113,7 @@ export default function App() {
           </div>
         ) : (
           <ul className="list">
-            {places.map((p) => (
+            {places.slice(0, LIST_LIMIT).map((p) => (
               <li key={p.id}>
                 <button type="button" className="card" onClick={() => setSelectedId(p.id)}>
                   <div className="card-top">
@@ -117,9 +135,22 @@ export default function App() {
             ))}
           </ul>
         )}
+        {view === 'list' && places.length > LIST_LIMIT && (
+          <p className="empty">가까운 {LIST_LIMIT}곳만 보여드려요. 반경을 줄이거나 조건을 더해 보세요.</p>
+        )}
       </main>
 
-      <footer className="footer muted">지금은 샘플 데이터로 보여주고 있어요. 실제 가게 정보가 아니에요.</footer>
+      <footer className="footer muted">
+        {data?.source === 'public-data' ? (
+          <>
+            출처: 한국문화정보원 「전국 반려동물 동반 가능 문화시설 위치 데이터」 (공공누리)
+            <br />
+            방문 전 동반 가능 여부를 가게에 꼭 확인해 주세요.
+          </>
+        ) : (
+          '지금은 샘플 데이터로 보여주고 있어요. 실제 가게 정보가 아니에요.'
+        )}
+      </footer>
 
       {selected && <PlaceDetail place={selected} onClose={() => setSelectedId(null)} />}
     </div>

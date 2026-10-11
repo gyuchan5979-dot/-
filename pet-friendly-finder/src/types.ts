@@ -1,7 +1,7 @@
 export type Category = 'restaurant' | 'cafe';
 
 /** 반려견을 데리고 들어갈 수 있는 범위 */
-export type PetArea = 'indoor' | 'terrace' | 'carrier';
+export type PetArea = 'indoor' | 'terrace' | 'carrier' | 'unknown';
 
 export interface Place {
   id: string;
@@ -15,6 +15,10 @@ export interface Place {
   /** 물그릇, 펫메뉴 등 반려견 편의 */
   amenities: string[];
   phone?: string;
+  /** 원본 데이터의 「입장 가능 동물 크기」 문구 */
+  sizeNote?: string;
+  /** 원본 데이터의 「반려동물 제한사항」 문구 */
+  restriction?: string;
   /** 동반 가능 여부를 마지막으로 확인한 날짜 (YYYY-MM-DD) */
   verifiedAt?: string;
 }
