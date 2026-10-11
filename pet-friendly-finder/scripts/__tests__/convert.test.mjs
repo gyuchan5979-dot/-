@@ -98,7 +98,7 @@ describe('convert-places CLI', () => {
     writeFileSync(input, iconv.encode(csv, 'cp949'));
     const out = join(dir, 'out');
 
-    execFileSync('node', [join(import.meta.dirname, '..', 'convert-places.mjs'), input, out]);
+    execFileSync('node', [join(import.meta.dirname, '..', 'convert-places.mjs'), input, join(dir, 'sources'), out]);
 
     const index = JSON.parse(readFileSync(join(out, 'index.json'), 'utf8'));
     expect(index.total).toBe(2);

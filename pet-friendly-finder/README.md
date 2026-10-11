@@ -14,7 +14,7 @@
    ```
 
 3. 출력되는 **카테고리별 행 수**를 보고, 식당·카페가 제대로 분류됐는지 확인하세요. 분류 규칙은 `scripts/lib/transform.mjs`의 `classify`에 있어요.
-4. `public/places/`를 커밋하면 앱이 자동으로 실제 데이터를 써요. 화면 하단에 출처가 표시돼요.
+4. 원본에서 고른 결과는 `data/sources/kcisa.json`에도 저장돼요. `public/places/`를 커밋하면 앱이 자동으로 실제 데이터를 써요. 화면 하단에 출처가 표시돼요.
 
 변환 규칙:
 
@@ -42,6 +42,42 @@ npm run dev
 - 카카오맵 키가 없으면 지도 탭에 안내 문구만 나오고, 목록 기능은 그대로 동작해요.
 - 카카오 개발자 콘솔에서 JavaScript 키의 사이트 도메인에 `http://localhost:5173`과 실제 서비스 도메인을 등록해야 지도가 떠요.
 
+## 한국관광공사 데이터 추가 (TourAPI)
+
+한국관광공사 「반려동물 동반여행 서비스」에서 음식점(카페 포함)을 받아 합쳐요.
+
+1. 공공데이터포털 [한국관광공사_반려동물_동반여행_서비스](https://www.data.go.kr/data/15135102/openapi.do)에서 **활용신청** (개발계정은 자동승인, 하루 1,000회)
+2. 마이페이지에서 **일반 인증키(Decoding)** 를 복사해서 실행:
+
+   ```bash
+   TOUR_API_KEY='발급받은키' npm run data:tourapi
+   ```
+
+3. 가게마다 상세 조회를 한 번씩 해서 호출이 많아요. 한도에 걸리면 받은 만큼 `data/cache/`에 저장하고 멈추니, 다음 날 같은 명령을 다시 실행하면 이어서 받아요.
+4. 결과는 `data/sources/tourapi.json`에 저장되고 `public/places/`가 다시 만들어져요. 같은 가게(80m 안, 이름 같음)는 한국관광공사 정보를 우선해요.
+
+> 이 API는 실제 키로 아직 실행해 보지 못했어요. 명세(Swagger)의 필드 이름으로 만들었으니, 처음 실행할 때 결과 개수와 "제외" 사유를 꼭 확인하세요.
+
+## 사용자 제보 (Supabase)
+
+"정보가 달라요" 신고와 "+ 장소 제보"는 Supabase(무료 플랜으로 충분)에 저장해요. 설정하지 않으면 제보 버튼이 숨겨지거나 "준비 중"으로 나와요.
+
+1. [supabase.com](https://supabase.com)에서 프로젝트 생성
+2. SQL Editor에 `supabase/schema.sql` 내용을 붙여 넣고 실행
+3. Project Settings → API의 **Project URL**과 **anon public 키**를 `.env.local`에 넣기
+
+   ```
+   VITE_SUPABASE_URL=https://xxxx.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJ...
+   ```
+
+운영 방법 (Supabase 대시보드 → Table Editor):
+
+- `place_submissions`: 새 장소 제보. `status`를 `approved`로 바꾸면 앱에 바로 나타나요 (`verified_at`에 확인한 날짜를 넣으면 "정보 작성일"로 표시돼요). 이상한 제보는 `rejected`.
+- `place_reports`: 기존 가게 신고. `place_id`로 가게를 찾고, 폐업·동반 불가가 여러 건 쌓이면 데이터에서 빼 주세요. 처리하면 `status`를 `resolved`로.
+
+보안: 앱(anon 키)은 제보 **추가**와 승인된 제보 **읽기**만 할 수 있어요. 직접 승인하거나, 신고 내용·다른 사람의 키를 읽거나, 같은 날 같은 제보를 반복할 수 없어요. 사용자는 토스 익명 키(토스 앱 밖에서는 기기별 임의 값)로만 구분해요.
+
 ## 앱인토스 배포
 
 설정은 `apps-in-toss.config.ts`에 있어요. `appName`은 앱인토스 콘솔에 등록한 이름과 맞춰야 해요.
@@ -62,7 +98,10 @@ npx ait deploy
 | `src/components/KakaoMap.tsx` | 카카오맵 표시 |
 | `src/components/PlaceDetail.tsx` | 상세 바텀시트, 카카오맵 길찾기 |
 | `src/lib/places.ts` | 위치 주변 격자의 데이터만 불러오기 (없으면 샘플) |
-| `scripts/convert-places.mjs` | 공공데이터 CSV → `public/places/` 변환 |
+| `scripts/convert-places.mjs` | 한국문화정보원 CSV → `data/sources/kcisa.json` |
+| `scripts/fetch-tourapi.mjs` | 한국관광공사 API → `data/sources/tourapi.json` |
+| `scripts/build-places.mjs` | `data/sources/*` 합치고 중복 제거 → `public/places/` |
+| `src/lib/reports.ts`, `supabase/schema.sql` | 사용자 제보 저장·조회 |
 | `src/data/samplePlaces.ts` | 샘플 데이터 |
 
 ## 다음 할 일
@@ -70,6 +109,7 @@ npx ait deploy
 - [x] 공공데이터 변환기와 격자별 불러오기
 - [x] 실제 CSV 변환 결과 커밋 (2025-03-24판 → 식당·카페 821곳)
 - [ ] 데이터 보강: 대부분 2022-11 작성이고 식당이 15곳뿐이라, 사용자 제보·다른 출처가 필요해요
-- [ ] TourAPI 반려동물 동반여행 데이터 추가
-- [ ] "정보가 달라요" 제보 저장
+- [x] "정보가 달라요" 신고와 새 장소 제보 (Supabase)
+- [ ] TourAPI 키 발급 후 `npm run data:tourapi` 실행
+- [ ] Supabase 프로젝트 만들고 키 연결
 - [ ] 토스 광고 연동

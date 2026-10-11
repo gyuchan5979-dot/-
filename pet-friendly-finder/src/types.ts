@@ -1,7 +1,7 @@
 export type Category = 'restaurant' | 'cafe';
 
 /** 반려견을 데리고 들어갈 수 있는 범위 */
-export type PetArea = 'indoor' | 'terrace' | 'carrier' | 'unknown';
+export type PetArea = 'indoor' | 'terrace' | 'partial' | 'carrier' | 'unknown';
 
 export interface Place {
   id: string;
@@ -21,6 +21,8 @@ export interface Place {
   restriction?: string;
   /** 동반 가능 여부를 마지막으로 확인한 날짜 (YYYY-MM-DD) */
   verifiedAt?: string;
+  /** 데이터 출처: kcisa(한국문화정보원), tourapi(한국관광공사), user(사용자 제보) */
+  source?: string;
 }
 
 export interface Coords {

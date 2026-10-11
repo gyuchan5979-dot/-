@@ -209,6 +209,7 @@ main {
 }
 
 .tag-terrace,
+.tag-partial,
 .tag-carrier {
   background: var(--orange-soft);
   color: var(--orange);
@@ -371,4 +372,132 @@ main {
   grid-template-columns: 1fr auto;
   gap: 8px;
   margin-top: 16px;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-small {
+  flex: none;
+  padding: 7px 12px;
+  font-size: 14px;
+  border-radius: 10px;
+  color: var(--primary);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.empty-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.form > .muted {
+  margin: 0;
+  font-size: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.input {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  resize: vertical;
+}
+
+.input:focus {
+  outline: 2px solid var(--primary-soft);
+  border-color: var(--primary);
+}
+
+.chips-inline {
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.option.is-active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.option input {
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.sheet {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: rgba(25, 31, 40, 0.92);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  z-index: 20;
+  max-width: calc(100% - 32px);
+  text-align: center;
 }

@@ -73,7 +73,8 @@ export function largeDogAllowed(sizeText, restriction = '') {
   const s = String(sizeText ?? '').replace(/\s/g, '');
   if (!s) return false;
   if (/대형견[^,]*(불가|제한)/.test(String(restriction ?? ''))) return false;
-  if (/모두|전체|제한없|대형/.test(s)) return true;
+  if (/대형[^,]*(불가|제외|제한)/.test(s)) return false;
+  if (/모두|모든|전체|제한없|대형/.test(s)) return true;
   const kg = s.match(/(\d+(?:\.\d+)?)kg/i);
   // 대략 25kg 이상까지 허용하면 대형견도 가능하다고 봐요.
   if (kg) return Number(kg[1]) >= 25;

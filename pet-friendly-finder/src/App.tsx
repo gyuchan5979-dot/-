@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { KakaoMap } from './components/KakaoMap';
 import { PlaceDetail } from './components/PlaceDetail';
+import { SubmitPlaceSheet } from './components/SubmitPlaceSheet';
 import { distanceMeters, formatDistance } from './lib/geo';
 import { getMyLocation, type LocationResult } from './lib/location';
 import { loadPlacesNear, type PlacesResult } from './lib/places';
+import { reportingEnabled } from './lib/reports';
 import { PET_AREA_LABEL } from './labels';
 import type { Category, PlaceWithDistance } from './types';
 
@@ -23,6 +25,14 @@ export default function App() {
   const [view, setView] = useState<'list' | 'map'>('list');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [data, setData] = useState<PlacesResult | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const refreshLocation = useCallback(() => {
     setLocation(null);
@@ -60,7 +70,14 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🐾 우리 댕댕이랑 갈 곳</h1>
+        <div className="header-top">
+          <h1>🐾 우리 댕댕이랑 갈 곳</h1>
+          {reportingEnabled && location && (
+            <button type="button" className="btn btn-small" onClick={() => setSubmitting(true)}>
+              + 장소 제보
+            </button>
+          )}
+        </div>
         <LocationStatus location={location} onRetry={refreshLocation} />
       </header>
 
@@ -105,11 +122,18 @@ export default function App() {
         ) : places.length === 0 ? (
           <div className="empty">
             <p>반경 {radius / 1000}km 안에 조건에 맞는 곳이 없어요.</p>
-            {radius < 5000 && (
-              <button type="button" className="btn" onClick={() => setRadius(5000)}>
-                5km로 넓혀 보기
-              </button>
-            )}
+            <div className="empty-actions">
+              {radius < MAX_RADIUS && (
+                <button type="button" className="btn" onClick={() => setRadius(MAX_RADIUS)}>
+                  {MAX_RADIUS / 1000}km로 넓혀 보기
+                </button>
+              )}
+              {reportingEnabled && (
+                <button type="button" className="btn" onClick={() => setSubmitting(true)}>
+                  아는 곳 제보하기
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <ul className="list">
@@ -143,7 +167,7 @@ export default function App() {
       <footer className="footer muted">
         {data?.source === 'public-data' ? (
           <>
-            출처: 한국문화정보원 「전국 반려동물 동반 가능 문화시설 위치 데이터」 (공공누리)
+            출처: {data.sourceLabels.join(', ')}
             <br />
             방문 전 동반 가능 여부를 가게에 꼭 확인해 주세요.
           </>
@@ -152,7 +176,20 @@ export default function App() {
         )}
       </footer>
 
-      {selected && <PlaceDetail place={selected} onClose={() => setSelectedId(null)} />}
+      {selected && <PlaceDetail place={selected} onClose={() => setSelectedId(null)} onToast={setToast} />}
+      {submitting && location && (
+        <SubmitPlaceSheet
+          coords={location.coords}
+          hasRealLocation={location.source !== 'default'}
+          onClose={() => setSubmitting(false)}
+          onToast={setToast}
+        />
+      )}
+      {toast && (
+        <div className="toast" role="status">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
