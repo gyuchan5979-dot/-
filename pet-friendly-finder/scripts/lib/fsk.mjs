@@ -38,7 +38,7 @@ export function geocodeQuery(address) {
 
 /** 업종·이름으로 식당/카페 구분 */
 export function fskCategory(row) {
-  if (/카페|커피|coffee|cafe|베이커리|제과|디저트|티룸|찻집/i.test(row.name)) return 'cafe';
+  if (/카페|커피|coffee|cafe|베이커리|bakery|제과|디저트|케이크|cake|빵|도넛|티룸|찻집/i.test(row.name)) return 'cafe';
   if (/휴게음식점|제과점/.test(row.type)) return 'cafe';
   return 'restaurant';
 }
