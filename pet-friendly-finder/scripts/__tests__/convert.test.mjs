@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import iconv from 'iconv-lite';
 import { describe, expect, it } from 'vitest';
-import { classify, largeDogAllowed, normalizeDate, petArea, resolveColumns, toPlace } from '../lib/transform.mjs';
+import { classify, isAnimalCafe, largeDogAllowed, normalizeDate, petArea, resolveColumns, toPlace } from '../lib/transform.mjs';
 
 // 테스트용 가상 행이에요. 컬럼명은 공공데이터 파일 명세 형식을 따랐어요.
 const HEADER = [
@@ -43,6 +43,22 @@ describe('transform', () => {
     });
   });
 
+  it('카테고리2가 "반려동물식당카페"여도 카테고리3으로 식당을 구분한다', () => {
+    const { place } = toPlace(row({ 카테고리2: '반려동물식당카페', 카테고리3: '식당' }), columns, 0);
+    expect(place.category).toBe('restaurant');
+  });
+
+  it('고양이·라쿤 카페는 빼고, 강아지와 함께인 곳은 남긴다', () => {
+    for (const n of ['고양이다락방 신촌점', '2Cats', '야옹야옹캣카페', '라쿤카페 꾸꾸네', '똥꼬냥']) expect(isAnimalCafe(n)).toBe(true);
+    for (const n of ['냥냥댕댕 카페 수제간식', '애니멀 패밀리 반려견카페', '사직커피', '카페 구할구 남산']) expect(isAnimalCafe(n)).toBe(false);
+    expect(toPlace(row({ 시설명: '고양이정원' }), columns, 0).reason).toBe('animalCafe');
+  });
+
+  it('"제한사항 없음"은 비운다', () => {
+    const { place } = toPlace(row({ '반려동물 제한사항': '제한사항 없음' }), columns, 0);
+    expect(place.restriction).toBeUndefined();
+  });
+
   it('식당·카페가 아니거나 동반 불가·좌표 이상이면 제외', () => {
     expect(toPlace(row({ 카테고리2: '동물병원', 카테고리3: '동물병원' }), columns, 0).reason).toBe('category');
     expect(toPlace(row({ '반려동물 동반 가능정보': 'N' }), columns, 0).reason).toBe('notAllowed');
@@ -59,6 +75,11 @@ describe('transform', () => {
     expect(petArea({ indoor: 'Y', restriction: '이동장 필수' })).toBe('carrier');
     expect(petArea({})).toBe('unknown');
     expect(normalizeDate('20250324')).toBe('2025-03-24');
+    expect(largeDogAllowed('모두 가능', '대형견 입장 불가')).toBe(false);
+    expect(largeDogAllowed('소형/중형')).toBe(false);
+    expect(petArea({ indoor: 'Y', outdoor: 'Y', restriction: '실외만 동반 가능' })).toBe('terrace');
+    expect(petArea({ indoor: 'Y', restriction: '야외테라스만 동반 가능' })).toBe('terrace');
+    expect(petArea({ indoor: 'Y', restriction: '안고 있어야 함' })).toBe('carrier');
   });
 });
 

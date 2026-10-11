@@ -56,12 +56,23 @@ export function classify(categoryText) {
 }
 
 /**
- * 「입장 가능 동물 크기」 값으로 대형견 입장 가능 여부 판단.
- * 예: "모두 가능" → true, "15kg 미만" / "소형견" → false
+ * 고양이·라쿤 카페처럼 동물을 보러 가는 곳인지.
+ * 원본에 "반려동물 동반 가능"으로 들어가 있지만 강아지를 데려갈 곳은 아니라서 빼요.
+ * 이름에 강아지 관련 단어도 있으면(예: "냥냥댕댕") 남겨요.
  */
-export function largeDogAllowed(sizeText) {
+export function isAnimalCafe(name) {
+  const s = String(name ?? '');
+  return /고양이|캣|(?<![a-z])cats?(?![a-z])|냥|냐옹|야옹|라쿤|미어캣|애니멀고/i.test(s) && !/댕|강아지|반려견|애견|멍|도그|dog|퍼피/i.test(s);
+}
+
+/**
+ * 「입장 가능 동물 크기」·「반려동물 제한사항」으로 대형견 입장 가능 여부 판단.
+ * 예: "모두 가능" → true, "15kg 미만" / "소형/중형" → false
+ */
+export function largeDogAllowed(sizeText, restriction = '') {
   const s = String(sizeText ?? '').replace(/\s/g, '');
   if (!s) return false;
+  if (/대형견[^,]*(불가|제한)/.test(String(restriction ?? ''))) return false;
   if (/모두|전체|제한없|대형/.test(s)) return true;
   const kg = s.match(/(\d+(?:\.\d+)?)kg/i);
   // 대략 25kg 이상까지 허용하면 대형견도 가능하다고 봐요.
@@ -69,9 +80,14 @@ export function largeDogAllowed(sizeText) {
   return false;
 }
 
-/** 실내/실외/케이지 조건으로 동반 범위 판단 */
+/**
+ * 실내/실외 여부와 제한사항 문구로 동반 범위 판단.
+ * 원본의 「장소(실내) 여부」는 거의 다 Y라서, 제한사항 문구를 먼저 봐요.
+ */
 export function petArea({ indoor, outdoor, restriction }) {
-  if (/케이지|이동장|이동가방|캐리어|가방/.test(String(restriction ?? ''))) return 'carrier';
+  const r = String(restriction ?? '');
+  if (/케이지|이동장|이동가방|캐리어|가방|안고/.test(r)) return 'carrier';
+  if (/(실외|야외|테라스)[^,]*만/.test(r)) return 'terrace';
   if (yes(indoor)) return 'indoor';
   if (yes(outdoor)) return 'terrace';
   return 'unknown';
@@ -86,7 +102,7 @@ export function normalizeDate(v) {
 
 const clean = (v) => {
   const s = String(v ?? '').trim();
-  return s && !/^(정보없음|없음|해당없음|-|null)$/i.test(s) ? s : undefined;
+  return s && !/^(정보없음|없음|해당없음|제한사항없음|-|null)$/i.test(s.replace(/\s/g, '')) ? s : undefined;
 };
 
 /**
@@ -96,8 +112,8 @@ const clean = (v) => {
 export function toPlace(row, columns, index) {
   const get = (field) => (columns[field] === undefined ? undefined : row[columns[field]]);
 
-  const categoryText = [get('cat1'), get('cat2'), get('cat3')].filter(Boolean).join(' ');
-  const category = classify(categoryText);
+  // 카테고리2가 "반려동물식당카페"처럼 둘 다 담고 있어서, 가장 구체적인 카테고리3부터 봐요.
+  const category = classify(String(get('cat3') ?? '')) ?? classify(String(get('cat2') ?? ''));
   if (!category) return { place: null, reason: 'category' };
 
   if (no(get('petAllowed'))) return { place: null, reason: 'notAllowed' };
@@ -109,6 +125,7 @@ export function toPlace(row, columns, index) {
 
   const name = clean(get('name'));
   if (!name) return { place: null, reason: 'name' };
+  if (isAnimalCafe(name)) return { place: null, reason: 'animalCafe' };
 
   const restriction = clean(get('restriction'));
   return {
@@ -120,7 +137,7 @@ export function toPlace(row, columns, index) {
       lat: Math.round(lat * 1e6) / 1e6,
       lng: Math.round(lng * 1e6) / 1e6,
       petArea: petArea({ indoor: get('indoor'), outdoor: get('outdoor'), restriction }),
-      largeDogOk: largeDogAllowed(get('sizeAllowed')),
+      largeDogOk: largeDogAllowed(get('sizeAllowed'), restriction),
       amenities: [],
       ...(clean(get('sizeAllowed')) && { sizeNote: clean(get('sizeAllowed')) }),
       ...(restriction && { restriction }),
