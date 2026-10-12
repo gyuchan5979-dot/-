@@ -3,13 +3,15 @@ import { KakaoMap } from './components/KakaoMap';
 import { PlaceDetail } from './components/PlaceDetail';
 import { SubmitPlaceSheet } from './components/SubmitPlaceSheet';
 import { distanceMeters, formatDistance } from './lib/geo';
-import { getMyLocation, type LocationResult } from './lib/location';
+import { getMyLocation, hasLocationPermission, REGIONS, regionLocation, type LocationResult } from './lib/location';
 import { loadPlacesNear, type PlacesResult } from './lib/places';
 import { reportingEnabled } from './lib/reports';
 import { PET_AREA_LABEL } from './labels';
 import type { Category, PlaceWithDistance } from './types';
 
 const RADIUS_OPTIONS = [1000, 3000, 5000] as const;
+/** 카카오맵 키가 있을 때만 지도 탭을 보여줘요 */
+const MAP_ENABLED = Boolean(import.meta.env.VITE_KAKAO_MAP_KEY);
 const MAX_RADIUS = RADIUS_OPTIONS[RADIUS_OPTIONS.length - 1];
 /** 목록에 한 번에 그리는 최대 개수 */
 const LIST_LIMIT = 100;
@@ -18,6 +20,9 @@ type CategoryFilter = 'all' | Category;
 
 export default function App() {
   const [location, setLocation] = useState<LocationResult | null>(null);
+  /** 위치 권한 설명·지역 선택 화면을 보여줄지 */
+  const [choosing, setChoosing] = useState(false);
+  const [locating, setLocating] = useState(true);
   const [radius, setRadius] = useState<number>(3000);
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [largeDogOnly, setLargeDogOnly] = useState(false);
@@ -34,13 +39,35 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  const refreshLocation = useCallback(() => {
-    setLocation(null);
-    getMyLocation().then(setLocation);
+  const locate = useCallback(() => {
+    setChoosing(false);
+    setLocating(true);
+    getMyLocation().then((result) => {
+      setLocating(false);
+      setLocation(result);
+      // 권한을 거부했으면 지역을 직접 고를 수 있게 해요.
+      if (result.source === 'default') setChoosing(true);
+    });
   }, []);
 
+  const chooseRegion = useCallback((region: (typeof REGIONS)[number]) => {
+    setChoosing(false);
+    setLocation(regionLocation(region));
+  }, []);
+
+  // 이미 위치를 허용한 사용자만 바로 위치를 받아요. 처음이면 설명 화면부터 보여줘요.
   useEffect(() => {
-    getMyLocation().then(setLocation);
+    hasLocationPermission().then((allowed) => {
+      if (allowed) {
+        getMyLocation().then((result) => {
+          setLocating(false);
+          setLocation(result);
+        });
+      } else {
+        setLocating(false);
+        setChoosing(true);
+      }
+    });
   }, []);
 
   // 위치가 정해지면 가장 넓은 반경 기준으로 한 번 불러오고, 반경 변경은 화면에서 거르기만 해요.
@@ -78,9 +105,18 @@ export default function App() {
             </button>
           )}
         </div>
-        <LocationStatus location={location} onRetry={refreshLocation} />
+        <LocationStatus location={location} onRetry={locate} onChoose={() => setChoosing(true)} />
       </header>
 
+      {choosing && (
+        <LocationPicker
+          denied={location?.source === 'default' && location.denied}
+          onUseMyLocation={locate}
+          onChooseRegion={chooseRegion}
+        />
+      )}
+
+      {location && (
       <div className="filters">
         <div className="chips" role="group" aria-label="반경">
           {RADIUS_OPTIONS.map((r) => (
@@ -97,19 +133,27 @@ export default function App() {
           <Chip active={indoorOnly} onClick={() => setIndoorOnly((v) => !v)}>🏠 실내 동반</Chip>
         </div>
       </div>
+      )}
 
-      <div className="tabs" role="tablist">
-        <button role="tab" aria-selected={view === 'list'} onClick={() => setView('list')}>
-          목록 {data && <span className="count">{places.length}</span>}
-        </button>
-        <button role="tab" aria-selected={view === 'map'} onClick={() => setView('map')}>
-          지도
-        </button>
-      </div>
+      {MAP_ENABLED && (
+        <div className="tabs" role="tablist">
+          <button role="tab" aria-selected={view === 'list'} onClick={() => setView('list')}>
+            목록 {data && <span className="count">{places.length}</span>}
+          </button>
+          <button role="tab" aria-selected={view === 'map'} onClick={() => setView('map')}>
+            지도
+          </button>
+        </div>
+      )}
+      {!MAP_ENABLED && data && location && (
+        <p className="result-count">
+          {location.label ?? '내 주변'} {radius / 1000}km 안에 <strong>{places.length}곳</strong>
+        </p>
+      )}
 
       <main>
         {!location ? (
-          <p className="empty">📍 현재 위치를 확인하고 있어요…</p>
+          locating ? <p className="empty">📍 현재 위치를 확인하고 있어요…</p> : null
         ) : !data ? (
           <p className="empty">🐾 주변 가게를 불러오고 있어요…</p>
         ) : view === 'map' ? (
@@ -165,8 +209,9 @@ export default function App() {
         )}
       </main>
 
+      {data && (
       <footer className="footer muted">
-        {data?.source === 'public-data' ? (
+        {data.source === 'public-data' ? (
           <>
             출처: {data.sourceLabels.join(', ')}
             <br />
@@ -176,12 +221,13 @@ export default function App() {
           '지금은 샘플 데이터로 보여주고 있어요. 실제 가게 정보가 아니에요.'
         )}
       </footer>
+      )}
 
       {selected && <PlaceDetail place={selected} onClose={() => setSelectedId(null)} onToast={setToast} />}
       {submitting && location && (
         <SubmitPlaceSheet
           coords={location.coords}
-          hasRealLocation={location.source !== 'default'}
+          hasRealLocation={location.source === 'toss' || location.source === 'browser'}
           onClose={() => setSubmitting(false)}
           onToast={setToast}
         />
@@ -211,20 +257,63 @@ function Chip({
   );
 }
 
-function LocationStatus({ location, onRetry }: { location: LocationResult | null; onRetry: () => void }) {
+function LocationStatus({
+  location,
+  onRetry,
+  onChoose,
+}: {
+  location: LocationResult | null;
+  onRetry: () => void;
+  onChoose: () => void;
+}) {
   if (!location) return null;
   let text = '현재 위치 기준';
+  if (location.source === 'region') text = `${location.label} 기준`;
   if (location.source === 'default') {
-    text = location.denied
-      ? '위치 권한이 없어 서울시청 기준으로 보여드려요'
-      : '위치를 못 찾아 서울시청 기준으로 보여드려요';
+    text = location.denied ? '위치 권한이 없어 서울 시청 기준으로 보여드려요' : '위치를 못 찾아 서울 시청 기준으로 보여드려요';
   }
   return (
     <p className="location-status">
       📍 {text}
-      <button type="button" className="link" onClick={onRetry}>
-        새로고침
+      {location.source !== 'region' && (
+        <button type="button" className="link" onClick={onRetry}>
+          새로고침
+        </button>
+      )}
+      <button type="button" className="link" onClick={onChoose}>
+        지역 바꾸기
       </button>
     </p>
+  );
+}
+
+function LocationPicker({
+  denied,
+  onUseMyLocation,
+  onChooseRegion,
+}: {
+  denied: boolean;
+  onUseMyLocation: () => void;
+  onChooseRegion: (region: (typeof REGIONS)[number]) => void;
+}) {
+  return (
+    <section className="picker" aria-label="위치 선택">
+      <h2>어디 근처를 찾아볼까요?</h2>
+      <p className="muted">
+        내 위치를 쓰면 가까운 순서로 보여드려요. 위치는 이 기기에서 거리를 계산할 때만 쓰고, 저장하거나 보내지 않아요.
+      </p>
+      {denied && <p className="notice">위치 권한이 꺼져 있어요. 아래에서 지역을 골라 둘러볼 수 있어요.</p>}
+      <button type="button" className="btn btn-primary btn-block" onClick={onUseMyLocation}>
+        📍 내 위치로 찾기
+      </button>
+      <p className="picker-label">또는 지역 고르기</p>
+      <div className="chips chips-inline">
+        {REGIONS.map((r) => (
+          <button key={r.label} type="button" className="chip" onClick={() => onChooseRegion(r)}>
+            {r.label}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }

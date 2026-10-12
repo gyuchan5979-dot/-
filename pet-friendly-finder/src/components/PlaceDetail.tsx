@@ -78,17 +78,15 @@ export function PlaceDetail({ place, onClose, onToast }: Props) {
 
       <p className="notice">방문 전에 가게에 동반 가능 여부를 한 번 더 확인해 주세요.</p>
 
-      <div className="sheet-actions">
+      <div className={`sheet-actions${reportingEnabled ? '' : ' single'}`}>
         <button type="button" className="btn btn-primary" onClick={() => openExternal(directionsUrl)}>
           카카오맵 길찾기
         </button>
-        <button
-          type="button"
-          className="btn"
-          onClick={() => (reportingEnabled ? setReporting(true) : onToast('제보 기능은 준비 중이에요.'))}
-        >
-          정보가 달라요
-        </button>
+        {reportingEnabled && (
+          <button type="button" className="btn" onClick={() => setReporting(true)}>
+            정보가 달라요
+          </button>
+        )}
       </div>
     </Sheet>
   );

@@ -25,3 +25,6 @@ dist-ssr
 
 # TourAPI 상세 조회 캐시 (다시 받을 수 있음)
 data/cache/
+
+# 앱인토스 번들 (npm run build로 생성)
+*.ait

@@ -516,3 +516,50 @@ main {
   padding: 10px 12px;
   border-radius: 10px;
 }
+
+.sheet-actions.single {
+  grid-template-columns: 1fr;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.picker {
+  margin: 4px 16px 16px;
+  padding: 20px 16px;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.picker h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.picker .muted,
+.picker .notice {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.picker-label {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.result-count {
+  margin: 4px 16px 12px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.result-count strong {
+  color: var(--primary);
+}
