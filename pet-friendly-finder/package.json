@@ -1,0 +1,36 @@
+{
+  "name": "pet-friendly-finder",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && ait build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "data:convert": "node scripts/convert-places.mjs",
+    "test": "vitest run",
+    "data:build": "node scripts/build-places.mjs",
+    "data:tourapi": "node scripts/fetch-tourapi.mjs",
+    "data:fsk": "node scripts/fetch-fsk.mjs",
+    "build:web": "tsc -b && vite build"
+  },
+  "dependencies": {
+    "@apps-in-toss/web-framework": "^3.8.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "csv-parse": "^7.0.3",
+    "iconv-lite": "^0.7.3",
+    "oxlint": "^1.81.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.3"
+  }
+}
