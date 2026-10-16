@@ -7,16 +7,15 @@
 
 | 항목 | 위치 | 지금 값 |
 |---|---|---|
-| 전화번호 | `js/config.js` 의 `phone` **그리고** 모든 파일에서 `010-0000-0000` 찾아 바꾸기 | 010-0000-0000 |
+| 전화번호 | `js/config.js` + `_build/common.py` 의 `PHONE` | ✅ 010-6394-6285 |
+| 대표자 · 사업자번호 · 상호 | `js/config.js` | ✅ 송민영 · 431-71-00596 · 런던 커튼&블라인드 |
 | 카카오 채널 주소 | `js/config.js` → `kakaoUrl` | 비어 있음 (카톡 버튼 자동 숨김) |
 | 문의 폼 | formspree.io 에서 폼 생성 → `js/config.js` → `formspreeId` | 비어 있음 (전화 안내 팝업) |
-| 대표자 · 사업자번호 · 상호 | `js/config.js` → `ceo`, `bizNumber`, `legalName` | 비어 있음 |
 | 이메일 | `js/config.js` → `email` | 비어 있음 (푸터에서 숨김) |
 | 사진 | 아래 "사진 교체" 참고 | 자리표시용 |
 
-> 전화번호는 검색엔진용 업체 정보(구조화 데이터)에도 들어 있어서 `config.js` 만 바꾸면 부족합니다.
-> 에디터(VS Code 등)의 **전체 찾아 바꾸기**로 `010-0000-0000` 을 실제 번호로 한 번에 바꿔 주세요.
-> (생성기를 쓴다면 `_build/common.py` 의 `PHONE` 을 바꾸고 `python3 _build/build.py` 실행)
+> 전화번호를 바꿀 때는 `_build/common.py` 의 `PHONE` 을 바꾸고 `python3 _build/build.py` 를 실행하세요.
+> (검색엔진용 업체 정보에도 번호가 들어 있어서 `config.js` 만 바꾸면 부족합니다)
 
 ## 폴더 구조
 

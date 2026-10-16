@@ -8,8 +8,8 @@ const SITE_CONFIG = {
     // 🌐 사이트 주소
     siteUrl: "https://londoncurtain.co.kr",
 
-    // 📞 연락처 ★ (HTML 안의 010-0000-0000 도 전체 찾아 바꾸기로 같이 바꿔 주세요)
-    phone: "010-0000-0000",
+    // 📞 연락처 (바꿀 때는 HTML 안의 번호도 전체 찾아 바꾸기 또는 _build/common.py 의 PHONE 수정 후 재생성)
+    phone: "010-6394-6285",
     email: "",
 
     // 💬 카카오 채널 ★ (비워 두면 카톡 버튼이 자동으로 숨겨집니다)
@@ -30,9 +30,9 @@ const SITE_CONFIG = {
     // 🏢 회사 정보 ★
     companyName: "런던커튼",
     companyNameEn: "LONDON CURTAIN",
-    legalName: "",          // 사업자등록증의 상호 (companyName 과 같으면 "" )
-    ceo: "",                // 대표자 이름
-    bizNumber: "",          // 사업자등록번호
+    legalName: "런던 커튼&블라인드",   // 사업자등록증의 상호
+    ceo: "송민영",                // 대표자 이름
+    bizNumber: "431-71-00596",   // 사업자등록번호
     address: "경기 남양주시 진접읍 · 서울 · 경기 방문 시공",
 
     // ⏰ 영업 시간

@@ -10,7 +10,7 @@ DOMAIN = "londoncurtain.co.kr"
 SITE = "https://" + DOMAIN
 BRAND = "런던커튼"
 BRAND_EN = "LONDON CURTAIN"
-PHONE = "010-0000-0000"          # ★ 실제 번호로 바꾼 뒤 build.py 다시 실행
+PHONE = "010-6394-6285"
 VER = "202610071200"             # 캐시 갱신용 (사진 · CSS를 바꾸면 숫자 올리기)
 TODAY = "2026-10-07"
 BASE_LOCALITY = "남양주시 진접읍"
@@ -38,6 +38,9 @@ def business_ld(name=None, url=SITE + "/", area=None, desc=None):
         "url": url,
         "image": SITE + "/" + v("images/og-image.jpg"),
         "telephone": PHONE,
+        "legalName": "런던 커튼&블라인드",
+        "taxID": "431-71-00596",
+        "founder": {"@type": "Person", "name": "송민영"},
         "priceRange": "₩₩",
         "description": desc or "남양주 진접을 중심으로 서울 · 경기 전 지역 커튼 · 블라인드 맞춤 제작과 시공. 원단 샘플을 들고 무료 방문 실측합니다.",
         "address": {
