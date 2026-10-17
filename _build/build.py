@@ -588,7 +588,7 @@ def build_products():
         text, specs, case = PRODUCT_DETAIL[k]
         dl = "".join(f"<dt>{a}</dt><dd>{b}</dd>" for a, b in specs)
         blocks += f'''            <article class="product-block" id="{k}">
-                <div class="split-img"><img src="{v('images/products/' + k + '.jpg')}" alt="{p["name"]} 시공 이미지" loading="lazy"></div>
+                <div class="split-img"><img src="{v('images/products/' + k + '.jpg')}" alt="{p["name"]} 제품 이미지" loading="lazy"></div>
                 <div>
                     <h2>{p["name"]}</h2>
                     <span class="en">{p["en"]}</span>

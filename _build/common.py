@@ -11,7 +11,7 @@ SITE = "https://" + DOMAIN
 BRAND = "런던커튼"
 BRAND_EN = "LONDON CURTAIN"
 PHONE = "010-6394-6285"
-VER = "202610171800"             # 캐시 갱신용 (사진 · CSS를 바꾸면 숫자 올리기)
+VER = "202610172000"             # 캐시 갱신용 (사진 · CSS를 바꾸면 숫자 올리기)
 TODAY = "2026-10-07"
 BASE_LOCALITY = "남양주시 진접읍"
 
@@ -185,7 +185,7 @@ PRODUCTS = {
 def product_card(key, cls="product-card"):
     p = PRODUCTS[key]
     return (f'                <a href="products.html#{key}" class="{cls}">\n'
-            f'                    <div class="product-img"><img src="{v("images/products/" + key + ".jpg")}" alt="{p["name"]} 시공 이미지" loading="lazy"></div>\n'
+            f'                    <div class="product-img"><img src="{v("images/products/" + key + ".jpg")}" alt="{p["name"]} 제품 이미지" loading="lazy"></div>\n'
             f'                    <h3>{p["name"]}</h3>\n'
             f'                    <p>{p["short"]}</p>\n'
             f'                </a>\n')
