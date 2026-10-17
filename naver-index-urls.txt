@@ -1,0 +1,107 @@
+# 런던커튼 네이버 수집 요청 URL (총 84개)
+# 서치어드바이저 > 요청 > 웹 페이지 수집 에 한 줄씩 붙여넣기
+# 하루 요청 개수 제한이 있어 1일차 / 2일차로 나눔
+
+########## 1일차 ##########
+
+## 기본 페이지 (8)
+https://londoncurtain.co.kr/
+https://londoncurtain.co.kr/areas.html
+https://londoncurtain.co.kr/inquiry.html
+https://londoncurtain.co.kr/products.html
+https://londoncurtain.co.kr/gallery.html
+https://londoncurtain.co.kr/blog.html
+https://londoncurtain.co.kr/faq.html
+https://londoncurtain.co.kr/about.html
+
+## 남양주 (진접 우선) (11)
+https://londoncurtain.co.kr/area-jinjeop.html
+https://londoncurtain.co.kr/area-namyangju.html
+https://londoncurtain.co.kr/area-onam.html
+https://londoncurtain.co.kr/area-byeollae.html
+https://londoncurtain.co.kr/area-dasan.html
+https://londoncurtain.co.kr/area-hopyeong.html
+https://londoncurtain.co.kr/area-pyeongnae.html
+https://londoncurtain.co.kr/area-hwado.html
+https://londoncurtain.co.kr/area-deokso.html
+https://londoncurtain.co.kr/area-jingeon.html
+https://londoncurtain.co.kr/area-wangsuk.html
+
+## 진접 인접 (5)
+https://londoncurtain.co.kr/area-pocheon.html
+https://londoncurtain.co.kr/area-uijeongbu.html
+https://londoncurtain.co.kr/area-guri.html
+https://londoncurtain.co.kr/area-yangju.html
+https://londoncurtain.co.kr/area-gapyeong.html
+
+## 서울 (25)
+https://londoncurtain.co.kr/area-nowon.html
+https://londoncurtain.co.kr/area-dobong.html
+https://londoncurtain.co.kr/area-gangbuk.html
+https://londoncurtain.co.kr/area-jungnang.html
+https://londoncurtain.co.kr/area-seongbuk.html
+https://londoncurtain.co.kr/area-dongdaemun.html
+https://londoncurtain.co.kr/area-gwangjin.html
+https://londoncurtain.co.kr/area-seongdong.html
+https://londoncurtain.co.kr/area-jongno.html
+https://londoncurtain.co.kr/area-junggu.html
+https://londoncurtain.co.kr/area-yongsan.html
+https://londoncurtain.co.kr/area-mapo.html
+https://londoncurtain.co.kr/area-seodaemun.html
+https://londoncurtain.co.kr/area-eunpyeong.html
+https://londoncurtain.co.kr/area-gangseo.html
+https://londoncurtain.co.kr/area-yangcheon.html
+https://londoncurtain.co.kr/area-guro.html
+https://londoncurtain.co.kr/area-geumcheon.html
+https://londoncurtain.co.kr/area-yeongdeungpo.html
+https://londoncurtain.co.kr/area-dongjak.html
+https://londoncurtain.co.kr/area-gwanak.html
+https://londoncurtain.co.kr/area-seocho.html
+https://londoncurtain.co.kr/area-gangnam.html
+https://londoncurtain.co.kr/area-songpa.html
+https://londoncurtain.co.kr/area-gangdong.html
+
+########## 2일차 ##########
+
+## 경기 (21)
+https://londoncurtain.co.kr/area-hanam.html
+https://londoncurtain.co.kr/area-seongnam.html
+https://londoncurtain.co.kr/area-goyang.html
+https://londoncurtain.co.kr/area-suwon.html
+https://londoncurtain.co.kr/area-yongin.html
+https://londoncurtain.co.kr/area-hwaseong.html
+https://londoncurtain.co.kr/area-anyang.html
+https://londoncurtain.co.kr/area-gunpo.html
+https://londoncurtain.co.kr/area-uiwang.html
+https://londoncurtain.co.kr/area-gwacheon.html
+https://londoncurtain.co.kr/area-gwangmyeong.html
+https://londoncurtain.co.kr/area-bucheon.html
+https://londoncurtain.co.kr/area-siheung.html
+https://londoncurtain.co.kr/area-ansan.html
+https://londoncurtain.co.kr/area-gimpo.html
+https://londoncurtain.co.kr/area-paju.html
+https://londoncurtain.co.kr/area-gwangju.html
+https://londoncurtain.co.kr/area-icheon.html
+https://londoncurtain.co.kr/area-yangpyeong.html
+https://londoncurtain.co.kr/area-osan.html
+https://londoncurtain.co.kr/area-pyeongtaek.html
+
+## 매거진 (14)
+https://londoncurtain.co.kr/blog-1-move-in-schedule.html
+https://londoncurtain.co.kr/blog-2-choose-shop.html
+https://londoncurtain.co.kr/blog-3-curtain-length.html
+https://londoncurtain.co.kr/blog-4-blackout.html
+https://londoncurtain.co.kr/blog-5-combi-vs-wood.html
+https://londoncurtain.co.kr/blog-6-blind-types.html
+https://londoncurtain.co.kr/blog-7-curtain-quote.html
+https://londoncurtain.co.kr/blog-8-motorized.html
+https://londoncurtain.co.kr/blog-9-no-drill.html
+https://londoncurtain.co.kr/blog-10-washing.html
+https://londoncurtain.co.kr/blog-11-winter.html
+https://londoncurtain.co.kr/blog-12-kids-room.html
+https://londoncurtain.co.kr/blog-13-pleats.html
+https://londoncurtain.co.kr/blog-14-big-window.html
+
+## 사이트맵 / RSS (요청 > 사이트맵 제출, RSS 제출 메뉴에 각각 한 번만)
+https://londoncurtain.co.kr/sitemap.xml
+https://londoncurtain.co.kr/rss.xml
