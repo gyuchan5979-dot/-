@@ -1060,6 +1060,7 @@ RewriteRule ^_build/ - [F,L]
 </IfModule>
 ''')
 
+    return  # 파비콘은 images/favicon.png (로고에서 생성)
     write("images/favicon.svg", '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="12" fill="#1C2633"/>
   <g fill="none" stroke="#B8955E" stroke-width="3" stroke-linecap="round">

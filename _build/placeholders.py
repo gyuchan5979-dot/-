@@ -103,40 +103,15 @@ def placeholder(rel, size, label, tone):
 
 
 def og_image():
+    """공유 미리보기: 로고(images/brand/logo-full.png)를 네이비 배경 가운데에"""
     path = os.path.join(ROOT, "images", "og-image.jpg")
     if os.path.exists(path) and not FORCE:
         return False
-    w, h = 1200, 630
-    img = Image.new("RGB", (w, h), NAVY)
-    d = ImageDraw.Draw(img)
-    # 창 + 커튼 마크
-    cx, top = 600, 92
-    d.rectangle([cx - 46, top, cx + 46, top + 92], outline=BRASS, width=4)
-    d.line([cx - 46, top + 16, cx + 46, top + 16], fill=BRASS, width=4)
-    d.arc([cx - 46 - 70, top + 16, cx - 6, top + 16 + 152], 270, 360, fill=BRASS, width=4)
-    d.arc([cx + 6, top + 16, cx + 46 + 70, top + 16 + 152], 180, 270, fill=BRASS, width=4)
-    f_en = ImageFont.truetype(SERIF, 96)
-    f_ko = ImageFont.truetype(KO, 34)
-    f_sub = ImageFont.truetype(KO, 28)
-    f_dom = ImageFont.truetype(SERIF, 26)
-
-    def center(t, f, y, fill, spacing=0):
-        if spacing:
-            widths = [d.textlength(ch, font=f) for ch in t]
-            x = (w - (sum(widths) + spacing * (len(t) - 1))) / 2
-            for ch, cw in zip(t, widths):
-                d.text((x, y), ch, font=f, fill=fill)
-                x += cw + spacing
-        else:
-            d.text(((w - d.textlength(t, font=f)) / 2, y), t, font=f, fill=fill)
-
-    center("LONDON", f_en, 220, (255, 255, 255), spacing=22)
-    center("런 던 커 튼", f_ko, 340, BRASS)
-    d.line([w / 2 - 40, 404, w / 2 + 40, 404], fill=(255, 255, 255, 80), width=1)
-    center("남양주 진접 커튼 · 블라인드 맞춤 시공", f_sub, 430, (235, 232, 226))
-    center("서울 · 경기 무료 방문 실측", f_sub, 474, (200, 196, 188))
-    center("londoncurtain.co.kr", f_dom, 556, BRASS)
-    img.save(path, "JPEG", quality=88, optimize=True)
+    logo = Image.open(os.path.join(ROOT, "images", "brand", "logo-full.png"))
+    og = Image.new("RGB", (1200, 630), (10, 20, 32))
+    logo.thumbnail((560, 520), Image.LANCZOS)
+    og.paste(logo, ((1200 - logo.width) // 2, (630 - logo.height) // 2), logo)
+    og.save(path, "JPEG", quality=90)
     return True
 
 

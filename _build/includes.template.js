@@ -68,16 +68,14 @@ var navItems = NAV_MENU.map(function (m) {
   return '<li><a href="' + m.href + '">' + m.name + '</a></li>';
 }).join("");
 
-var logoMark = '<svg class="logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">'
-  + '<rect x="4" y="4" width="24" height="24" stroke-width="1.3"/><path d="M4 8h24" stroke-width="1.3"/>'
-  + '<path d="M8.5 8c0 7 2.2 13 6 20M23.5 8c0 7-2.2 13-6 20" stroke-width="1.3"/></svg>';
+var logoMark = '<img class="logo-mark" src="images/brand/logo-icon-sm.png?v=__VER__" alt="" width="58" height="60">';
 
 /* ===== 공통 헤더 ===== */
 var headerHTML = ''
 + '<header class="site-header" id="siteHeader">'
 + '  <div class="header-inner">'
 + '    <a href="index.html" class="logo" aria-label="' + C.companyName + ' 홈">' + logoMark
-+ '      <span class="logo-text"><span class="logo-en">LONDON</span><span class="logo-ko">런던커튼</span></span>'
++ '      <span class="logo-text"><span class="logo-name">런던커튼&amp;블라인드</span><span class="logo-sub">LONDON CURTAIN &amp; BLIND</span></span>'
 + '    </a>'
 + '    <nav class="main-nav" id="mainNav" aria-label="주 메뉴"><ul>' + navItems + '</ul>'
 + '      <div class="nav-mobile-contact">'
@@ -103,7 +101,7 @@ var footerHTML = ''
 + '  <div class="container">'
 + '    <div class="footer-top">'
 + '      <div class="footer-brand">'
-+ '        <p class="footer-logo">LONDON<span>런던커튼</span></p>'
++ '        <p class="footer-logo"><img src="images/brand/logo-icon-sm.png?v=__VER__" alt="" width="46" height="48">런던커튼&amp;블라인드</p>'
 + '        <p class="footer-slogan">창가에 오래 머무는 단정한 아름다움.<br>남양주 진접에서 서울 · 경기까지, 커튼 · 블라인드 맞춤 시공</p>'
 + '      </div>'
 + '      <div class="footer-col">'
