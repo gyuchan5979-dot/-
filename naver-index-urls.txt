@@ -1,4 +1,4 @@
-# 런던커튼 네이버 수집 요청 URL (총 100개)
+# 런던커튼 네이버 수집 요청 URL (총 121개)
 # 서치어드바이저 > 요청 > 웹 페이지 수집 에 한 줄씩 붙여넣기
 # 하루 요청 개수 제한이 있어 1일차 / 2일차 / 3일차로 나눔
 
@@ -104,7 +104,7 @@ https://londoncurtain.co.kr/blog-14-big-window.html
 
 ########## 3일차 ##########
 
-## 시공사례 (16)
+## 시공사례 (37)
 https://londoncurtain.co.kr/case-01.html
 https://londoncurtain.co.kr/case-02.html
 https://londoncurtain.co.kr/case-03.html
@@ -121,6 +121,27 @@ https://londoncurtain.co.kr/case-13.html
 https://londoncurtain.co.kr/case-14.html
 https://londoncurtain.co.kr/case-15.html
 https://londoncurtain.co.kr/case-16.html
+https://londoncurtain.co.kr/case-17.html
+https://londoncurtain.co.kr/case-18.html
+https://londoncurtain.co.kr/case-19.html
+https://londoncurtain.co.kr/case-20.html
+https://londoncurtain.co.kr/case-21.html
+https://londoncurtain.co.kr/case-22.html
+https://londoncurtain.co.kr/case-23.html
+https://londoncurtain.co.kr/case-24.html
+https://londoncurtain.co.kr/case-25.html
+https://londoncurtain.co.kr/case-26.html
+https://londoncurtain.co.kr/case-27.html
+https://londoncurtain.co.kr/case-28.html
+https://londoncurtain.co.kr/case-29.html
+https://londoncurtain.co.kr/case-30.html
+https://londoncurtain.co.kr/case-31.html
+https://londoncurtain.co.kr/case-32.html
+https://londoncurtain.co.kr/case-33.html
+https://londoncurtain.co.kr/case-34.html
+https://londoncurtain.co.kr/case-35.html
+https://londoncurtain.co.kr/case-36.html
+https://londoncurtain.co.kr/case-37.html
 
 ## 사이트맵 / RSS (요청 > 사이트맵 제출, RSS 제출 메뉴에 각각 한 번만)
 https://londoncurtain.co.kr/sitemap.xml
