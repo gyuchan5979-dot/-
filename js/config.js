@@ -24,7 +24,7 @@ const SITE_CONFIG = {
 
     // 📋 Formspree (문의 폼) ★ formspree.io 에서 폼을 만들고 받은 ID 를 넣어 주세요
     //    비워 두면 신청 버튼을 눌렀을 때 전화 · 카톡 상담으로 안내합니다.
-    formspreeId: "",
+    formspreeId: "meaenjpn",
     formSubject: "[런던커튼] 새 견적 문의가 도착했습니다",
 
     // 🏢 회사 정보 ★
