@@ -49,11 +49,7 @@ IMAGES = [
     ("products/roll.jpg", (900, 1200), "롤스크린"),
     ("products/motor.jpg", (900, 1200), "전동 커튼 · 블라인드"),
 ]
-CASE_LABELS = ["거실 · 린넨 + 쉬폰", "안방 · 암막 커튼", "거실 · 콤비 블라인드",
-               "서재 · 우드 블라인드", "아이방 · 암막 롤스크린", "전원주택 · 전동 커튼"]
-for i, lab in enumerate(CASE_LABELS, 1):
-    IMAGES.append((f"cases/case-{i:02d}.jpg", (1600, 1200), f"시공사례 {i:02d} 대표 · {lab}"))
-    IMAGES.append((f"cases/case-{i:02d}-2.jpg", (1600, 1200), f"시공사례 {i:02d} 디테일"))
+# 시공사례 사진은 _build/photos.py 가 실제 사진으로 만듭니다.
 
 
 def gradient(size, top, bottom):
