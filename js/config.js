@@ -80,6 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (inquiryForm) {
         if (SITE_CONFIG.formspreeId) {
             inquiryForm.action = `https://formspree.io/f/${SITE_CONFIG.formspreeId}`;
+            // 페이지 이동 없이 전송하고, 성공하면 우리 사이트의 완료 페이지로 이동
+            // (Formspree 무료 요금제의 리디렉션 제한과 상관없이 작동)
+            inquiryForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const btn = inquiryForm.querySelector('button[type="submit"]');
+                const label = btn ? btn.textContent : "";
+                if (btn) { btn.disabled = true; btn.textContent = "전송 중..."; }
+                const fail = () => {
+                    if (btn) { btn.disabled = false; btn.textContent = label; }
+                    alert("전송이 되지 않았습니다. 잠시 후 다시 시도하시거나\n전화 " + SITE_CONFIG.phone + " 로 연락 주세요.");
+                };
+                fetch(inquiryForm.action, {
+                    method: "POST",
+                    body: new FormData(inquiryForm),
+                    headers: { "Accept": "application/json" }
+                }).then(res => {
+                    if (res.ok) location.href = "thanks.html";
+                    else fail();
+                }).catch(fail);
+            });
         } else {
             inquiryForm.addEventListener('submit', e => {
                 e.preventDefault();

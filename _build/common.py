@@ -11,7 +11,7 @@ SITE = "https://" + DOMAIN
 BRAND = "런던커튼"
 BRAND_EN = "LONDON CURTAIN"
 PHONE = "010-6394-6285"
-VER = "202610071200"             # 캐시 갱신용 (사진 · CSS를 바꾸면 숫자 올리기)
+VER = "202610171200"             # 캐시 갱신용 (사진 · CSS를 바꾸면 숫자 올리기)
 TODAY = "2026-10-07"
 BASE_LOCALITY = "남양주시 진접읍"
 
