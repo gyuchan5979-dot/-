@@ -191,6 +191,14 @@ CASES = [
          title="나무가 보이는 창, 위만 연 허니콤 블라인드",
          text="나무가 보이는 방 창에 상하 개폐 허니콤 블라인드를 달았습니다. 위쪽을 열어 초록 풍경과 빛은 들이고, 아래쪽은 가려 방 안을 편안하게 지켜 줍니다.",
          points=["상하 개폐로 프라이버시와 채광을 동시에", "두 칸으로 나눠 따로 조절", "벽과 어울리는 화이트"]),
+    dict(no="38", cat="curtain", space="거실", product="린넨 커튼", spec="내추럴 린넨 겉커튼 + 린넨 쉬폰 (이중 레일)", photos=1,
+         title="햇살이 결 사이로 스미는 거실 린넨 커튼",
+         text="통창이 있는 거실에 내추럴 톤 린넨 겉커튼과 얇은 린넨 쉬폰을 이중 레일로 달았습니다. 린넨 특유의 굵은 결이 햇빛을 한 번 걸러 거실 전체가 따뜻한 색으로 물들고, 바닥까지 넉넉하게 떨어지는 길이로 자연스러운 주름을 살렸습니다.",
+         points=["천장 커튼박스에 이중 레일", "바닥에 살짝 닿는 넉넉한 기장으로 자연스러운 주름", "원목 바닥 · 패브릭 소파와 어울리는 내추럴 톤"]),
+    dict(no="39", cat="curtain blind motor", space="거실", product="전동 커튼 · 롤스크린", spec="린넨 웨이브 커튼 + 롤스크린 (조망 통창)", photos=1,
+         title="조망 통창을 살린 커튼과 롤스크린 조합",
+         text="산과 도시가 보이는 큰 거실 창 양옆에 린넨 웨이브 커튼을 달고, 창에는 롤스크린을 칸마다 맞춰 달았습니다. 낮에는 롤스크린을 위쪽만 내려 햇빛을 거르고 풍경은 그대로 보이게, 밤에는 커튼까지 닫아 아늑하게 쓰는 구성입니다. 넓고 높은 창은 전동으로 구성하면 버튼 하나로 여닫을 수 있습니다.",
+         points=["창 칸마다 맞춘 롤스크린으로 필요한 만큼만 가리기", "벽 끝까지 이어지는 웨이브 커튼으로 창이 넓어 보이게", "천장부터 바닥까지 떨어지는 긴 기장"]),
 ]
 
 
@@ -302,7 +310,7 @@ def build_index():
                 <a href="gallery.html" class="link-more">전체 사례 보기 →</a>
             </div>
             <div class="case-grid">
-{case_card(CASES[0], extra=" wide reveal")}{case_card(CASES[16], extra=" reveal d1")}{case_card(CASES[5], extra=" reveal")}{case_card(CASES[35], extra=" reveal d1")}{case_card(CASES[28], extra=" reveal d2")}            </div>
+{case_card(CASES[37], extra=" wide reveal")}{case_card(CASES[16], extra=" reveal d1")}{case_card(CASES[5], extra=" reveal")}{case_card(CASES[35], extra=" reveal d1")}{case_card(CASES[28], extra=" reveal d2")}            </div>
         </div>
     </section>
 
@@ -486,6 +494,7 @@ def build_gallery():
                 <button class="filter-btn is-active" data-filter="all">전체</button>
                 <button class="filter-btn" data-filter="curtain">커튼</button>
                 <button class="filter-btn" data-filter="blind">블라인드</button>
+                <button class="filter-btn" data-filter="motor">전동</button>
                 <button class="filter-btn" data-filter="commercial">매장 · 사무실</button>
             </div>
             <div class="case-grid is-even">
@@ -494,7 +503,7 @@ def build_gallery():
     </section>
 '''
     write("gallery.html", page("gallery.html", "커튼 · 블라인드 시공사례 | 남양주 진접 런던커튼",
-                               "런던커튼 실제 커튼 · 블라인드 시공 사례 37건. 거실 겉커튼 · 쉬폰 이중 커튼, 침실 커튼, 콤비 · 우드 · 허니콤 · 알루미늄 블라인드, 롤스크린, 매장 · 사무실까지 공간별로 확인하세요.",
+                               "런던커튼 실제 커튼 · 블라인드 시공 사례 39건. 거실 겉커튼 · 쉬폰 이중 커튼, 침실 커튼, 콤비 · 우드 · 허니콤 · 알루미늄 블라인드, 롤스크린, 매장 · 사무실까지 공간별로 확인하세요.",
                                "커튼 시공사례, 블라인드 시공사례, 남양주 커튼 시공, 진접 커튼, 거실 커튼, 안방 암막커튼, 콤비블라인드 시공, 우드블라인드 시공, 전동커튼 시공",
                                body, crumbs=[("시공사례", "gallery.html")]))
 
@@ -577,7 +586,7 @@ PRODUCT_DETAIL = {
     "roll": ("원단 한 장을 말아 올리는 가장 단순한 구조라 창이 가장 깔끔해 보입니다. 바깥이 비치는 선스크린, 빛을 막는 암막, 일반 원단까지 원단에 따라 쓰임이 완전히 달라져요.",
              [("특징", "미니멀한 디자인, 다양한 원단"), ("추천 공간", "아이방, 드레스룸, 주방, 사무실, 카페"), ("함께 쓰면", "커튼(암막 보강)"), ("관리", "끝까지 내린 상태에서 청소기")], "case-03.html"),
     "motor": ("손이 닿지 않는 높은 창, 무겁고 넓은 통창도 리모컨이나 스마트폰으로 여닫습니다. 예약 기능으로 아침에 열고 저녁에 닫는 것도 가능해요. 전원 위치가 중요하니 인테리어 공사가 있다면 먼저 상담해 주세요.",
-              [("특징", "리모컨 · 벽 스위치 · 앱 조작, 예약 개폐"), ("추천 공간", "전원주택 높은 창, 주상복합 통창, 복층"), ("함께 쓰면", "린넨 웨이브 커튼, 허니콤 · 롤스크린"), ("관리", "레일 · 모터 점검은 A/S로")], "gallery.html"),
+              [("특징", "리모컨 · 벽 스위치 · 앱 조작, 예약 개폐"), ("추천 공간", "전원주택 높은 창, 주상복합 통창, 복층"), ("함께 쓰면", "린넨 웨이브 커튼, 허니콤 · 롤스크린"), ("관리", "레일 · 모터 점검은 A/S로")], "case-39.html"),
 }
 
 
@@ -588,7 +597,7 @@ def build_products():
         text, specs, case = PRODUCT_DETAIL[k]
         dl = "".join(f"<dt>{a}</dt><dd>{b}</dd>" for a, b in specs)
         blocks += f'''            <article class="product-block" id="{k}">
-                <div class="split-img"><img src="{v('images/products/' + k + '.jpg')}" alt="{p["name"]} 제품 이미지" loading="lazy"></div>
+                <div class="split-img"><img src="{v('images/products/' + k + '.jpg')}" alt="{p["name"]} 실제 시공 사진" loading="lazy"></div>
                 <div>
                     <h2>{p["name"]}</h2>
                     <span class="en">{p["en"]}</span>

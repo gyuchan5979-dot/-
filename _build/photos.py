@@ -69,7 +69,7 @@ HEROES = {
 
 # ---------- 제품 (세로 3:4) ----------
 PRODUCTS = {
-    "products/linen.jpg":    ("product-linen", (300, 30, 945, 896), (0.5, 0.0)),   # 친구가 보낸 린넨 커튼 제품 사진
+    "products/linen.jpg":    ("product-linen", (300, 30, 945, 896), (0.5, 0.0)),   # 린넨 커튼 실제 시공 사진 (case-38)
     "products/chiffon.jpg":  ("9",  (950, 0, 2000, 1500),     (0.5, 0.0)),
     "products/blackout.jpg": ("13", (300, 0, 1600, 1500),     (0.5, 0.0)),
     "products/wood.jpg":     ("6",  (500, 0, 1800, 1300),     (0.5, 0.0)),
@@ -129,6 +129,8 @@ CASES = {
     "35": [("44", None)],
     "36": [("45", (250, 0, 1820, 1300))],
     "37": [("46", (0, 0, 1450, 1250))],
+    "38": [("product-linen", None)],
+    "39": [("product-motor", None)],
 }
 
 
@@ -160,4 +162,4 @@ if __name__ == "__main__":
         for i, (n, box) in enumerate(photos):
             rel = f"cases/case-{no}.jpg" if i == 0 else f"cases/case-{no}-{i + 1}.jpg"
             save(fit(load(n), 4 / 3, box, (0.5, 0.3)), rel, (1600, 1200))
-    save(fit(load("product-motor"), 3 / 4, (240, 0, 960, 896), (0.5, 0.0)), "products/motor.jpg", (900, 1200))   # 전동 커튼 · 롤스크린 제품 사진
+    save(fit(load("product-motor"), 3 / 4, (240, 0, 960, 896), (0.5, 0.0)), "products/motor.jpg", (900, 1200))   # 전동 커튼 · 롤스크린 실제 시공 사진 (case-39)
