@@ -13,7 +13,7 @@ const SITE_CONFIG = {
     email: "",
 
     // 💬 카카오 채널 ★ (비워 두면 카톡 버튼이 자동으로 숨겨집니다)
-    kakaoUrl: "",
+    kakaoUrl: "https://pf.kakao.com/_FxlTmX",
 
     // 📍 네이버 플레이스 (리뷰 보기 버튼에 연결, 없으면 "" 로 두면 버튼이 숨겨짐)
     naverPlaceUrl: "",

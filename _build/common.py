@@ -43,6 +43,7 @@ def business_ld(name=None, url=SITE + "/", area=None, desc=None):
         "taxID": "431-71-00596",
         "founder": {"@type": "Person", "name": "송민영"},
         "priceRange": "₩₩",
+        "sameAs": ["https://pf.kakao.com/_FxlTmX"],
         "description": desc or "남양주 진접을 중심으로 서울 · 경기 전 지역 커튼 · 블라인드 맞춤 제작과 시공. 원단 샘플을 들고 무료 방문 실측합니다.",
         "address": {
             "@type": "PostalAddress",

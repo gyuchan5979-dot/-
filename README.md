@@ -9,7 +9,7 @@
 |---|---|---|
 | 전화번호 | `js/config.js` + `_build/common.py` 의 `PHONE` | ✅ 010-6394-6285 |
 | 대표자 · 사업자번호 · 상호 | `js/config.js` | ✅ 송민영 · 431-71-00596 · 런던 커튼&블라인드 |
-| 카카오 채널 주소 | `js/config.js` → `kakaoUrl` | 비어 있음 (카톡 버튼 자동 숨김) |
+| 카카오 채널 주소 | `js/config.js` → `kakaoUrl` | ✅ pf.kakao.com/_FxlTmX |
 | 문의 폼 | `js/config.js` → `formspreeId` | ✅ meaenjpn (친구 메일로 수신) |
 | 이메일 | `js/config.js` → `email` | 비어 있음 (푸터에서 숨김) |
 | 사진 | 아래 "사진 교체" 참고 | 자리표시용 |
