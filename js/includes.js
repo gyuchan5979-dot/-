@@ -23,25 +23,25 @@ var NAV_MENU = [
 /* ✅ 메인 히어로 슬라이드 (사진만 바꾸려면 같은 파일명으로 FTP 업로드)
       caption: 사진 오른쪽 아래에 작게 표시되는 사진 설명 */
 var HOME_HERO_SLIDES = [
-  { img: "images/hero/hero-01.jpg?v=202610071200", caption: "거실 · 린넨 겉커튼 + 쉬폰", alt: "거실 린넨 겉커튼과 쉬폰 시공 사진" },
-  { img: "images/hero/hero-02.jpg?v=202610071200", caption: "안방 · 암막 커튼",         alt: "안방 암막 커튼 시공 사진" },
-  { img: "images/hero/hero-03.jpg?v=202610071200", caption: "거실 · 우드 블라인드",      alt: "거실 우드 블라인드 시공 사진" }
+  { img: "images/hero/hero-01.jpg?v=202610172100", caption: "거실 · 겉커튼 + 쉬폰",   alt: "거실 베이지 겉커튼과 화이트 쉬폰 실제 시공 사진" },
+  { img: "images/hero/hero-02.jpg?v=202610172100", caption: "침실 · 화이트 쉬폰",     alt: "침실 화이트 쉬폰 커튼 실제 시공 사진" },
+  { img: "images/hero/hero-03.jpg?v=202610172100", caption: "매장 · 코너 통창 쉬폰",  alt: "매장 코너 통창 화이트 쉬폰 커튼 실제 시공 사진" }
 ];
 
 /* ✅ 서브 페이지 히어로 (HTML의 data-hero="키" 와 연결)
       img: 배경 사진 / eyebrow: 제목 위 영문 소제목 */
 var PAGE_HEROES = {
-  gallery:  { img: "images/hero/hero-gallery.jpg?v=202610071200",  eyebrow: "WORKS" },
-  "case":   { img: "images/hero/hero-gallery.jpg?v=202610071200",  eyebrow: "CASE STUDY",  parent: { name: "시공사례", href: "gallery.html" } },
-  products: { img: "images/hero/hero-products.jpg?v=202610071200", eyebrow: "PRODUCTS" },
-  areas:    { img: "images/hero/hero-areas.jpg?v=202610071200",    eyebrow: "SERVICE AREA" },
-  area:     { img: "images/hero/hero-areas.jpg?v=202610071200",    eyebrow: "SERVICE AREA", parent: { name: "시공지역", href: "areas.html" } },
-  blog:     { img: "images/hero/hero-blog.jpg?v=202610071200",     eyebrow: "MAGAZINE" },
-  post:     { img: "images/hero/hero-blog.jpg?v=202610071200",     eyebrow: "MAGAZINE",    parent: { name: "매거진", href: "blog.html" } },
-  about:    { img: "images/hero/hero-about.jpg?v=202610071200",    eyebrow: "BRAND STORY" },
-  faq:      { img: "images/hero/hero-faq.jpg?v=202610071200",      eyebrow: "FAQ" },
-  inquiry:  { img: "images/hero/hero-inquiry.jpg?v=202610071200",  eyebrow: "CONTACT" },
-  thanks:   { img: "images/hero/hero-inquiry.jpg?v=202610071200",  eyebrow: "THANK YOU" }
+  gallery:  { img: "images/hero/hero-gallery.jpg?v=202610172100",  eyebrow: "WORKS" },
+  "case":   { img: "images/hero/hero-gallery.jpg?v=202610172100",  eyebrow: "CASE STUDY",  parent: { name: "시공사례", href: "gallery.html" } },
+  products: { img: "images/hero/hero-products.jpg?v=202610172100", eyebrow: "PRODUCTS" },
+  areas:    { img: "images/hero/hero-areas.jpg?v=202610172100",    eyebrow: "SERVICE AREA" },
+  area:     { img: "images/hero/hero-areas.jpg?v=202610172100",    eyebrow: "SERVICE AREA", parent: { name: "시공지역", href: "areas.html" } },
+  blog:     { img: "images/hero/hero-blog.jpg?v=202610172100",     eyebrow: "MAGAZINE" },
+  post:     { img: "images/hero/hero-blog.jpg?v=202610172100",     eyebrow: "MAGAZINE",    parent: { name: "매거진", href: "blog.html" } },
+  about:    { img: "images/hero/hero-about.jpg?v=202610172100",    eyebrow: "BRAND STORY" },
+  faq:      { img: "images/hero/hero-faq.jpg?v=202610172100",      eyebrow: "FAQ" },
+  inquiry:  { img: "images/hero/hero-inquiry.jpg?v=202610172100",  eyebrow: "CONTACT" },
+  thanks:   { img: "images/hero/hero-inquiry.jpg?v=202610172100",  eyebrow: "THANK YOU" }
 };
 
 /* ✅ 지역 페이지 (자동 생성) */
@@ -129,16 +129,14 @@ var navItems = NAV_MENU.map(function (m) {
   return '<li><a href="' + m.href + '">' + m.name + '</a></li>';
 }).join("");
 
-var logoMark = '<svg class="logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">'
-  + '<rect x="4" y="4" width="24" height="24" stroke-width="1.3"/><path d="M4 8h24" stroke-width="1.3"/>'
-  + '<path d="M8.5 8c0 7 2.2 13 6 20M23.5 8c0 7-2.2 13-6 20" stroke-width="1.3"/></svg>';
+var logoMark = '<img class="logo-mark" src="images/brand/logo-icon-sm.png?v=202610172100" alt="" width="58" height="60">';
 
 /* ===== 공통 헤더 ===== */
 var headerHTML = ''
 + '<header class="site-header" id="siteHeader">'
 + '  <div class="header-inner">'
 + '    <a href="index.html" class="logo" aria-label="' + C.companyName + ' 홈">' + logoMark
-+ '      <span class="logo-text"><span class="logo-en">LONDON</span><span class="logo-ko">런던커튼</span></span>'
++ '      <span class="logo-text"><span class="logo-name">런던커튼&amp;블라인드</span><span class="logo-sub">LONDON CURTAIN &amp; BLIND</span></span>'
 + '    </a>'
 + '    <nav class="main-nav" id="mainNav" aria-label="주 메뉴"><ul>' + navItems + '</ul>'
 + '      <div class="nav-mobile-contact">'
@@ -164,7 +162,7 @@ var footerHTML = ''
 + '  <div class="container">'
 + '    <div class="footer-top">'
 + '      <div class="footer-brand">'
-+ '        <p class="footer-logo">LONDON<span>런던커튼</span></p>'
++ '        <p class="footer-logo"><img src="images/brand/logo-icon-sm.png?v=202610172100" alt="" width="46" height="48">런던커튼&amp;블라인드</p>'
 + '        <p class="footer-slogan">창가에 오래 머무는 단정한 아름다움.<br>남양주 진접에서 서울 · 경기까지, 커튼 · 블라인드 맞춤 시공</p>'
 + '      </div>'
 + '      <div class="footer-col">'
@@ -193,7 +191,7 @@ var footerHTML = ''
 /* ===== 하단 상담 섹션 (푸터 위, <div id="site-cta"></div> 자리에 들어감) ===== */
 var ctaHTML = ''
 + '<section class="contact-cta" id="contact">'
-+ '  <div class="bg"><img src="images/hero/hero-cta.jpg?v=202610071200" alt="" aria-hidden="true" loading="lazy"></div>'
++ '  <div class="bg"><img src="images/hero/hero-cta.jpg?v=202610172100" alt="" aria-hidden="true" loading="lazy"></div>'
 + '  <div class="container">'
 + '    <div>'
 + '      <p class="section-tag" style="color:var(--color-brass)">CONTACT</p>'

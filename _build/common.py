@@ -10,8 +10,8 @@ DOMAIN = "londoncurtain.co.kr"
 SITE = "https://" + DOMAIN
 BRAND = "런던커튼"
 BRAND_EN = "LONDON CURTAIN"
-PHONE = "010-0000-0000"          # ★ 실제 번호로 바꾼 뒤 build.py 다시 실행
-VER = "202610071200"             # 캐시 갱신용 (사진 · CSS를 바꾸면 숫자 올리기)
+PHONE = "010-6394-6285"
+VER = "202610172100"             # 캐시 갱신용 (사진 · CSS를 바꾸면 숫자 올리기)
 TODAY = "2026-10-07"
 BASE_LOCALITY = "남양주시 진접읍"
 
@@ -37,8 +37,13 @@ def business_ld(name=None, url=SITE + "/", area=None, desc=None):
         "alternateName": BRAND_EN,
         "url": url,
         "image": SITE + "/" + v("images/og-image.jpg"),
+        "logo": SITE + "/images/brand/logo-full.png",
         "telephone": PHONE,
+        "legalName": "런던 커튼&블라인드",
+        "taxID": "431-71-00596",
+        "founder": {"@type": "Person", "name": "송민영"},
         "priceRange": "₩₩",
+        "sameAs": ["https://pf.kakao.com/_FxlTmX"],
         "description": desc or "남양주 진접을 중심으로 서울 · 경기 전 지역 커튼 · 블라인드 맞춤 제작과 시공. 원단 샘플을 들고 무료 방문 실측합니다.",
         "address": {
             "@type": "PostalAddress",
@@ -109,7 +114,8 @@ def head(title, desc, keywords, path, og_image="images/og-image.jpg", og_type="w
     <meta property="og:url" content="{url}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="theme-color" content="#1C2633">
-    <link rel="icon" href="{v('images/favicon.svg')}" type="image/svg+xml">
+    <link rel="icon" href="{v('images/favicon.png')}" type="image/png">
+    <link rel="apple-touch-icon" href="{v('images/brand/apple-touch-icon.png')}">
     <link rel="alternate" type="application/rss+xml" title="{BRAND} 매거진" href="{SITE}/rss.xml">
 '''
     if verify:
@@ -180,7 +186,7 @@ PRODUCTS = {
 def product_card(key, cls="product-card"):
     p = PRODUCTS[key]
     return (f'                <a href="products.html#{key}" class="{cls}">\n'
-            f'                    <div class="product-img"><img src="{v("images/products/" + key + ".jpg")}" alt="{p["name"]} 시공 이미지" loading="lazy"></div>\n'
+            f'                    <div class="product-img"><img src="{v("images/products/" + key + ".jpg")}" alt="{p["name"]} 실제 시공 사진" loading="lazy"></div>\n'
             f'                    <h3>{p["name"]}</h3>\n'
             f'                    <p>{p["short"]}</p>\n'
             f'                </a>\n')
