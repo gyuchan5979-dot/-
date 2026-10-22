@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useBackHandler } from '../lib/back';
 import { formatDistance } from '../lib/geo';
 import { openExternal } from '../lib/location';
+import { kakaoDirectionsUrl, naverDirectionsUrl } from '../lib/mapLinks';
 import { REPORT_KIND_LABEL, reportPlace, reportingEnabled, type ReportKind, type SubmitResult } from '../lib/reports';
 import type { PlaceWithDistance } from '../types';
 import { PET_AREA_LABEL, SOURCE_LABEL } from '../labels';
@@ -17,7 +18,6 @@ export function PlaceDetail({ place, onClose, onToast }: Props) {
   const [reporting, setReporting] = useState(false);
   // 신고 화면에서 뒤로가기 → 가게 상세로 돌아가기
   useBackHandler(reporting, () => setReporting(false));
-  const directionsUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
 
   if (reporting) {
     return (
@@ -81,16 +81,20 @@ export function PlaceDetail({ place, onClose, onToast }: Props) {
 
       <p className="notice">방문 전에 가게에 동반 가능 여부를 한 번 더 확인해 주세요.</p>
 
-      <div className={`sheet-actions${reportingEnabled ? '' : ' single'}`}>
-        <button type="button" className="btn btn-primary" onClick={() => openExternal(directionsUrl)}>
-          카카오맵 길찾기
+      <p className="directions-label">길찾기</p>
+      <div className="sheet-actions directions">
+        <button type="button" className="btn btn-map btn-kakao" onClick={() => openExternal(kakaoDirectionsUrl(place))}>
+          카카오맵
         </button>
-        {reportingEnabled && (
-          <button type="button" className="btn" onClick={() => setReporting(true)}>
-            정보가 달라요
-          </button>
-        )}
+        <button type="button" className="btn btn-map btn-naver" onClick={() => openExternal(naverDirectionsUrl(place))}>
+          네이버 지도
+        </button>
       </div>
+      {reportingEnabled && (
+        <button type="button" className="btn btn-block btn-report" onClick={() => setReporting(true)}>
+          정보가 달라요
+        </button>
+      )}
     </Sheet>
   );
 }

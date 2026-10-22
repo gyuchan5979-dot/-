@@ -563,3 +563,34 @@ main {
 .result-count strong {
   color: var(--primary);
 }
+
+.directions-label {
+  margin: 16px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.sheet-actions.directions {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 0;
+}
+
+/* 각 지도 앱을 알아보기 쉽게 브랜드 색 */
+.btn-map {
+  border: 0;
+}
+
+.btn-kakao {
+  background: #fee500;
+  color: #191919;
+}
+
+.btn-naver {
+  background: #03c75a;
+  color: #fff;
+}
+
+.btn-report {
+  margin-top: 8px;
+}
