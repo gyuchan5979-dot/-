@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { KakaoMap } from './components/KakaoMap';
 import { PlaceDetail } from './components/PlaceDetail';
 import { SubmitPlaceSheet } from './components/SubmitPlaceSheet';
+import { useBackHandler } from './lib/back';
 import { distanceMeters, formatDistance } from './lib/geo';
 import { getMyLocation, hasLocationPermission, REGIONS, regionLocation, type LocationResult } from './lib/location';
 import { loadPlacesNear, type PlacesResult } from './lib/places';
@@ -20,8 +21,14 @@ type CategoryFilter = 'all' | Category;
 
 export default function App() {
   const [location, setLocation] = useState<LocationResult | null>(null);
-  /** 위치 권한 설명·지역 선택 화면을 보여줄지 */
-  const [choosing, setChoosing] = useState(false);
+  /**
+   * 지역 선택 화면
+   * - initial: 처음 화면(여기서 뒤로가기 = 미니앱 종료)
+   * - change: '지역 바꾸기'로 연 경우(뒤로가기 = 닫기)
+   */
+  const [pickerMode, setPickerMode] = useState<'initial' | 'change' | null>(null);
+  /** 처음 지역 선택 화면에서 골라 목록으로 넘어왔는지 (뒤로가기 = 지역 선택으로 돌아가기) */
+  const [fromInitialPicker, setFromInitialPicker] = useState(false);
   const [locating, setLocating] = useState(true);
   const [radius, setRadius] = useState<number>(3000);
   const [category, setCategory] = useState<CategoryFilter>('all');
@@ -40,20 +47,37 @@ export default function App() {
   }, [toast]);
 
   const locate = useCallback(() => {
-    setChoosing(false);
+    if (pickerMode === 'initial') setFromInitialPicker(true);
+    setPickerMode(null);
     setLocating(true);
     getMyLocation().then((result) => {
       setLocating(false);
       setLocation(result);
       // 권한을 거부했으면 지역을 직접 고를 수 있게 해요.
-      if (result.source === 'default') setChoosing(true);
+      if (result.source === 'default') {
+        setFromInitialPicker(false);
+        setPickerMode('initial');
+      }
     });
-  }, []);
+  }, [pickerMode]);
 
-  const chooseRegion = useCallback((region: (typeof REGIONS)[number]) => {
-    setChoosing(false);
-    setLocation(regionLocation(region));
-  }, []);
+  const chooseRegion = useCallback(
+    (region: (typeof REGIONS)[number]) => {
+      if (pickerMode === 'initial') setFromInitialPicker(true);
+      setPickerMode(null);
+      setLocation(regionLocation(region));
+    },
+    [pickerMode],
+  );
+
+  // 뒤로가기: 열린 것부터 닫아요. 가장 나중에 열린 것이 먼저 닫혀요. (자세한 규칙은 lib/back.ts)
+  useBackHandler(fromInitialPicker && pickerMode !== 'initial', () => {
+    setFromInitialPicker(false);
+    setPickerMode('initial');
+  });
+  useBackHandler(pickerMode === 'change', () => setPickerMode(null));
+  useBackHandler(selectedId !== null, () => setSelectedId(null));
+  useBackHandler(submitting, () => setSubmitting(false));
 
   // 이미 위치를 허용한 사용자만 바로 위치를 받아요. 처음이면 설명 화면부터 보여줘요.
   useEffect(() => {
@@ -65,7 +89,7 @@ export default function App() {
         });
       } else {
         setLocating(false);
-        setChoosing(true);
+        setPickerMode('initial');
       }
     });
   }, []);
@@ -105,10 +129,10 @@ export default function App() {
             </button>
           )}
         </div>
-        <LocationStatus location={location} onRetry={locate} onChoose={() => setChoosing(true)} />
+        <LocationStatus location={location} onRetry={locate} onChoose={() => setPickerMode('change')} />
       </header>
 
-      {choosing && (
+      {pickerMode && (
         <LocationPicker
           denied={location?.source === 'default' && location.denied}
           onUseMyLocation={locate}

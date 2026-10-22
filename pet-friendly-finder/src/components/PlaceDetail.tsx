@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useBackHandler } from '../lib/back';
 import { formatDistance } from '../lib/geo';
 import { openExternal } from '../lib/location';
 import { REPORT_KIND_LABEL, reportPlace, reportingEnabled, type ReportKind, type SubmitResult } from '../lib/reports';
@@ -14,6 +15,8 @@ interface Props {
 
 export function PlaceDetail({ place, onClose, onToast }: Props) {
   const [reporting, setReporting] = useState(false);
+  // 신고 화면에서 뒤로가기 → 가게 상세로 돌아가기
+  useBackHandler(reporting, () => setReporting(false));
   const directionsUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
 
   if (reporting) {
