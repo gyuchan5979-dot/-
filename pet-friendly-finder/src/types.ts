@@ -21,6 +21,8 @@ export interface Place {
   closedDays?: string;
   /** 주차 가능 여부 (모르면 없음) */
   parking?: boolean;
+  /** 법정 읍면동 이름 (동네 검색용) */
+  dong?: string;
   /** 원본 데이터의 「입장 가능 동물 크기」 문구 */
   sizeNote?: string;
   /** 원본 데이터의 「반려동물 제한사항」 문구 */

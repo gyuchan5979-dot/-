@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { KakaoMap } from './components/KakaoMap';
 import { Mascot } from './components/Mascot';
 import { PlaceDetail } from './components/PlaceDetail';
+import { PlaceSearch } from './components/PlaceSearch';
 import { SubmitPlaceSheet } from './components/SubmitPlaceSheet';
 import { useBackHandler } from './lib/back';
 import { distanceMeters, formatDistance } from './lib/geo';
@@ -9,6 +10,7 @@ import { getMyLocation, hasLocationPermission, REGIONS, regionLocation, type Loc
 import { useFavorites } from './lib/favorites';
 import { loadPlacesNear, type PlacesResult } from './lib/places';
 import { requirementsOf } from './lib/requirements';
+import { shortAreaLabel, type AreaHit, type PlaceHit } from './lib/search';
 import { reportingEnabled } from './lib/reports';
 import { PET_AREA_ICON, PET_AREA_LABEL } from './labels';
 import type { Category, PlaceWithDistance } from './types';
@@ -77,6 +79,23 @@ export default function App() {
     [pickerMode],
   );
 
+  /** 검색에서 가게를 골랐을 때: 그 근처 데이터를 받은 뒤 상세를 열어요. */
+  const pendingSelectId = useRef<string | null>(null);
+
+  const chooseArea = useCallback(
+    (area: AreaHit) => chooseRegion({ label: shortAreaLabel(area.label), coords: area.coords }),
+    [chooseRegion],
+  );
+
+  const choosePlace = useCallback(
+    (hit: PlaceHit) => {
+      pendingSelectId.current = hit.id;
+      setShowFavorites(false);
+      chooseRegion({ label: `${hit.name} 근처`, coords: hit.coords });
+    },
+    [chooseRegion],
+  );
+
   // 뒤로가기: 열린 것부터 닫아요. 가장 나중에 열린 것이 먼저 닫혀요. (자세한 규칙은 lib/back.ts)
   useBackHandler(fromInitialPicker && pickerMode !== 'initial', () => {
     setFromInitialPicker(false);
@@ -106,7 +125,14 @@ export default function App() {
     if (!location) return;
     let cancelled = false;
     loadPlacesNear(location.coords, MAX_RADIUS).then((result) => {
-      if (!cancelled) setData(result);
+      if (cancelled) return;
+      setData(result);
+      const id = pendingSelectId.current;
+      if (id) {
+        pendingSelectId.current = null;
+        const place = result.places.find((p) => p.id === id);
+        if (place) setSelected({ ...place, distanceM: distanceMeters(location.coords, place) });
+      }
     });
     return () => {
       cancelled = true;
@@ -155,6 +181,9 @@ export default function App() {
           denied={location?.source === 'default' && location.denied}
           onUseMyLocation={locate}
           onChooseRegion={chooseRegion}
+          onChooseArea={chooseArea}
+          onChoosePlace={choosePlace}
+          autoFocusSearch={pickerMode === 'change'}
         />
       )}
 
@@ -383,7 +412,7 @@ function LocationStatus({
         </button>
       )}
       <button type="button" className="link" onClick={onChoose}>
-        지역 바꾸기
+        🔍 검색·지역 바꾸기
       </button>
     </p>
   );
@@ -393,11 +422,18 @@ function LocationPicker({
   denied,
   onUseMyLocation,
   onChooseRegion,
+  onChooseArea,
+  onChoosePlace,
+  autoFocusSearch,
 }: {
   denied: boolean;
   onUseMyLocation: () => void;
   onChooseRegion: (region: (typeof REGIONS)[number]) => void;
+  onChooseArea: (area: AreaHit) => void;
+  onChoosePlace: (place: PlaceHit) => void;
+  autoFocusSearch: boolean;
 }) {
+  const [searching, setSearching] = useState(false);
   return (
     <section className="picker" aria-label="위치 선택">
       <div className="picker-hero">
@@ -412,14 +448,25 @@ function LocationPicker({
       <button type="button" className="btn btn-primary btn-block" onClick={onUseMyLocation}>
         📍 내 위치로 찾기
       </button>
-      <p className="picker-label">또는 지역 고르기</p>
-      <div className="chips chips-inline">
-        {REGIONS.map((r) => (
-          <button key={r.label} type="button" className="chip" onClick={() => onChooseRegion(r)}>
-            {r.label}
-          </button>
-        ))}
-      </div>
+      <p className="picker-label">또는 동네·가게 이름으로 찾기</p>
+      <PlaceSearch
+        autoFocus={autoFocusSearch}
+        onChooseArea={onChooseArea}
+        onChoosePlace={onChoosePlace}
+        onActiveChange={setSearching}
+      />
+      {!searching && (
+        <>
+          <p className="picker-label">인기 지역</p>
+          <div className="chips chips-inline">
+            {REGIONS.map((r) => (
+              <button key={r.label} type="button" className="chip" onClick={() => onChooseRegion(r)}>
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 }

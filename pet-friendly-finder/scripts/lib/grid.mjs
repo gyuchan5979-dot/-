@@ -2,6 +2,7 @@
 
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { buildSearchIndex } from './areas.mjs';
 import { CELL_SIZE, cellKey } from './transform.mjs';
 
 /** 같은 가게로 보는 거리(m) */
@@ -122,5 +123,7 @@ export function buildGrid(sourcesDir, outDir) {
     generatedAt: new Date().toISOString().slice(0, 10),
   };
   writeFileSync(join(outDir, 'index.json'), JSON.stringify(index));
+  // 동네·가게 이름 검색용 (검색창을 처음 열 때 한 번 받아요)
+  writeFileSync(join(outDir, 'search.json'), JSON.stringify(buildSearchIndex(places)));
   return { ...index, duplicates };
 }

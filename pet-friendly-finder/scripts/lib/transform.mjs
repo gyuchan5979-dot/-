@@ -29,6 +29,7 @@ const COLUMN_CANDIDATES = {
   hours: ['운영시간'],
   closedDays: ['휴무일'],
   parking: ['주차가능여부'],
+  dong: ['법정읍면동명칭'],
 };
 
 /** CSV 헤더 → { 필드: 컬럼 인덱스 } */
@@ -147,6 +148,7 @@ export function toPlace(row, columns, index) {
       ...(restriction && { restriction }),
       ...(clean(get('phone')) && { phone: clean(get('phone')) }),
       ...(clean(get('hours')) && { hours: clean(get('hours')) }),
+      ...(clean(get('dong')) && { dong: clean(get('dong')) }),
       ...(clean(get('closedDays')) && { closedDays: clean(get('closedDays')) }),
       ...(yes(get('parking')) ? { parking: true } : no(get('parking')) ? { parking: false } : {}),
       ...(normalizeDate(get('updatedAt')) && { verifiedAt: normalizeDate(get('updatedAt')) }),
