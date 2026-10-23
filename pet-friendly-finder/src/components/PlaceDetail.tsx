@@ -5,7 +5,7 @@ import { openExternal } from '../lib/location';
 import { kakaoDirectionsUrl, naverDirectionsUrl } from '../lib/mapLinks';
 import { REPORT_KIND_LABEL, reportPlace, reportingEnabled, type ReportKind, type SubmitResult } from '../lib/reports';
 import type { PlaceWithDistance } from '../types';
-import { PET_AREA_LABEL, SOURCE_LABEL } from '../labels';
+import { PET_AREA_ICON, PET_AREA_LABEL, SOURCE_LABEL } from '../labels';
 import { Sheet } from './Sheet';
 
 interface Props {
@@ -48,38 +48,38 @@ export function PlaceDetail({ place, onClose, onToast }: Props) {
 
       <dl className="facts">
         <div>
-          <dt>동반 범위</dt>
+          <dt>{PET_AREA_ICON[place.petArea]} 동반 범위</dt>
           <dd>{PET_AREA_LABEL[place.petArea]}</dd>
         </div>
         <div>
-          <dt>입장 가능 크기</dt>
+          <dt>🐕 입장 가능 크기</dt>
           <dd>{place.sizeNote ?? (place.largeDogOk ? '가능' : '불가 (소·중형견만)')}</dd>
         </div>
         {place.restriction && (
           <div>
-            <dt>제한사항</dt>
+            <dt>📌 제한사항</dt>
             <dd>{place.restriction}</dd>
           </div>
         )}
         {place.amenities.length > 0 && (
           <div>
-            <dt>편의</dt>
+            <dt>🥣 편의</dt>
             <dd>{place.amenities.join(', ')}</dd>
           </div>
         )}
         <div>
-          <dt>정보 작성일</dt>
+          <dt>🗓️ 정보 작성일</dt>
           <dd>{place.verifiedAt ?? '확인 기록 없음'}</dd>
         </div>
         {place.source && SOURCE_LABEL[place.source] && (
           <div>
-            <dt>출처</dt>
+            <dt>📚 출처</dt>
             <dd>{SOURCE_LABEL[place.source]}</dd>
           </div>
         )}
       </dl>
 
-      <p className="notice">방문 전에 가게에 동반 가능 여부를 한 번 더 확인해 주세요.</p>
+      <p className="notice">🐶 방문 전에 가게에 동반 가능 여부를 한 번 더 확인해 주세요.</p>
 
       <p className="directions-label">길찾기</p>
       <div className="sheet-actions directions">

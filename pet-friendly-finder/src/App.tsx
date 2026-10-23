@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { KakaoMap } from './components/KakaoMap';
+import { Mascot } from './components/Mascot';
 import { PlaceDetail } from './components/PlaceDetail';
 import { SubmitPlaceSheet } from './components/SubmitPlaceSheet';
 import { useBackHandler } from './lib/back';
@@ -7,7 +8,7 @@ import { distanceMeters, formatDistance } from './lib/geo';
 import { getMyLocation, hasLocationPermission, REGIONS, regionLocation, type LocationResult } from './lib/location';
 import { loadPlacesNear, type PlacesResult } from './lib/places';
 import { reportingEnabled } from './lib/reports';
-import { PET_AREA_LABEL } from './labels';
+import { PET_AREA_ICON, PET_AREA_LABEL } from './labels';
 import type { Category, PlaceWithDistance } from './types';
 
 const RADIUS_OPTIONS = [1000, 3000, 5000] as const;
@@ -122,7 +123,13 @@ export default function App() {
     <div className="app">
       <header className="header">
         <div className="header-top">
-          <h1>🐾 우리 댕댕이랑 갈 곳</h1>
+          <div className="brand">
+            <Mascot size={52} className="brand-mascot" />
+            <div>
+              <h1>댕댕이랑 갈 곳</h1>
+              <p className="brand-sub">우리 강아지랑 같이 들어갈 수 있는 곳 🐾</p>
+            </div>
+          </div>
           {reportingEnabled && location && (
             <button type="button" className="btn btn-small" onClick={() => setSubmitting(true)}>
               + 장소 제보
@@ -171,15 +178,16 @@ export default function App() {
       )}
       {!MAP_ENABLED && data && location && (
         <p className="result-count">
-          {location.label ?? '내 주변'} {radius / 1000}km 안에 <strong>{places.length}곳</strong>
+          🐶 {location.label ?? '내 주변'} {radius / 1000}km 안에 <strong>{places.length}곳</strong>
+          {places.length > 0 ? ' 있어요!' : ''}
         </p>
       )}
 
       <main>
         {!location ? (
-          locating ? <p className="empty">📍 현재 위치를 확인하고 있어요…</p> : null
+          locating ? <Loading text="킁킁… 지금 어디 있는지 찾고 있어요" /> : null
         ) : !data ? (
-          <p className="empty">🐾 주변 가게를 불러오고 있어요…</p>
+          <Loading text="킁킁… 주변 가게 냄새를 맡고 있어요" />
         ) : view === 'map' ? (
           <KakaoMap
             center={location.coords}
@@ -189,7 +197,12 @@ export default function App() {
           />
         ) : places.length === 0 ? (
           <div className="empty">
-            <p>반경 {radius / 1000}km 안에 조건에 맞는 곳이 없어요.</p>
+            <Mascot size={88} mood="sad" />
+            <p>
+              앗, 반경 {radius / 1000}km 안에는 조건에 맞는 곳이 없어요.
+              <br />
+              조금 더 멀리 산책해 볼까요?
+            </p>
             <div className="empty-actions">
               {radius < MAX_RADIUS && (
                 <button type="button" className="btn" onClick={() => setRadius(MAX_RADIUS)}>
@@ -208,6 +221,10 @@ export default function App() {
             {places.slice(0, LIST_LIMIT).map((p) => (
               <li key={p.id}>
                 <button type="button" className="card" onClick={() => setSelectedId(p.id)}>
+                  <span className={`card-icon card-icon-${p.category}`} aria-hidden="true">
+                    {p.category === 'cafe' ? '☕' : '🍽️'}
+                  </span>
+                  <div className="card-body">
                   <div className="card-top">
                     <span className="card-name">{p.name}</span>
                     <span className="card-dist">{formatDistance(p.distanceM)}</span>
@@ -217,11 +234,14 @@ export default function App() {
                   </div>
                   <div className="tags">
                     {p.official && <span className="tag tag-official">✓ 식약처 등록</span>}
-                    <span className={`tag tag-${p.petArea}`}>{PET_AREA_LABEL[p.petArea]}</span>
-                    {p.largeDogOk && <span className="tag tag-large">대형견 OK</span>}
+                    <span className={`tag tag-${p.petArea}`}>
+                      {PET_AREA_ICON[p.petArea]} {PET_AREA_LABEL[p.petArea]}
+                    </span>
+                    {p.largeDogOk && <span className="tag tag-large">🐕 대형견 OK</span>}
                     {p.amenities.slice(0, 2).map((a) => (
                       <span key={a} className="tag">{a}</span>
                     ))}
+                  </div>
                   </div>
                 </button>
               </li>
@@ -237,7 +257,7 @@ export default function App() {
       <footer className="footer muted">
         {data.source === 'public-data' ? (
           <>
-            출처: {data.sourceLabels.join(', ')}
+            🐾 출처: {data.sourceLabels.join(', ')}
             <br />
             방문 전 동반 가능 여부를 가게에 꼭 확인해 주세요.
           </>
@@ -322,6 +342,10 @@ function LocationPicker({
 }) {
   return (
     <section className="picker" aria-label="위치 선택">
+      <div className="picker-hero">
+        <Mascot size={84} />
+        <p className="bubble">오늘은 어디로 같이 갈까요?</p>
+      </div>
       <h2>어디 근처를 찾아볼까요?</h2>
       <p className="muted">
         내 위치를 쓰면 가까운 순서로 보여드려요. 위치는 이 기기에서 거리를 계산할 때만 쓰고, 저장하거나 보내지 않아요.
@@ -339,5 +363,19 @@ function LocationPicker({
         ))}
       </div>
     </section>
+  );
+}
+
+function Loading({ text }: { text: string }) {
+  return (
+    <div className="empty loading" role="status">
+      <Mascot size={88} mood="sniff" className="mascot-bob" />
+      <div className="paws" aria-hidden="true">
+        <span>🐾</span>
+        <span>🐾</span>
+        <span>🐾</span>
+      </div>
+      <p>{text}</p>
+    </div>
   );
 }

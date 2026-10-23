@@ -1,5 +1,5 @@
 :root {
-  --bg: #f2f4f6;
+  --bg: #fbf7f1;
   --surface: #ffffff;
   --text: #191f28;
   --muted: #6b7684;
@@ -10,7 +10,11 @@
   --green: #0a8f4f;
   --orange-soft: #fff3e0;
   --orange: #c66a00;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow: 0 2px 10px rgba(122, 84, 46, 0.08);
+  --cream: #fff6e9;
+  --brown: #8a5a32;
+  --peach: #ffe7da;
+  --butter: #fff3c4;
 
   font-family: 'Toss Product Sans', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
     'Noto Sans KR', sans-serif;
@@ -27,6 +31,9 @@
 body {
   margin: 0;
   background: var(--bg);
+  /* 한국어는 단어 중간에서 줄이 바뀌지 않게 */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 button {
@@ -593,4 +600,188 @@ main {
 
 .btn-report {
   margin-top: 8px;
+}
+
+/* ---------- 귀여운 요소 ---------- */
+
+.header {
+  background: linear-gradient(180deg, var(--cream) 0%, var(--bg) 100%);
+  border-radius: 0 0 24px 24px;
+  padding-bottom: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand h1 {
+  font-size: 21px;
+}
+
+.brand-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--brown);
+}
+
+.brand-mascot {
+  flex: none;
+  filter: drop-shadow(0 2px 4px rgba(122, 84, 46, 0.18));
+}
+
+.mascot-ears {
+  transform-origin: 60px 40px;
+}
+
+.brand-mascot .mascot-ears {
+  animation: ear-wiggle 3.2s ease-in-out infinite;
+}
+
+@keyframes ear-wiggle {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  85% { transform: rotate(-4deg); }
+  90% { transform: rotate(4deg); }
+  95% { transform: rotate(-2deg); }
+}
+
+.picker {
+  border: 2px solid var(--cream);
+}
+
+.picker-hero {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.bubble {
+  position: relative;
+  margin: 0 0 22px;
+  padding: 10px 14px;
+  background: var(--butter);
+  border-radius: 16px 16px 16px 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #5b4320;
+}
+
+.chip.is-active {
+  background: var(--primary-soft);
+}
+
+.result-count {
+  font-weight: 500;
+}
+
+.card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border-radius: 20px;
+  transition: transform 0.12s ease;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+
+.card-icon-cafe {
+  background: var(--butter);
+}
+
+.card-icon-restaurant {
+  background: var(--peach);
+}
+
+.tag {
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.empty .mascot {
+  display: block;
+  margin: 0 auto 8px;
+}
+
+.empty p {
+  line-height: 1.6;
+}
+
+.loading p {
+  margin-top: 4px;
+}
+
+.mascot-bob {
+  animation: bob 1.4s ease-in-out infinite;
+}
+
+.mascot-sniff .mascot-nose {
+  transform-origin: 60px 74px;
+  animation: sniff 0.5s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes sniff {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.paws {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 18px;
+}
+
+.paws span {
+  opacity: 0.2;
+  animation: paw-step 1.2s ease-in-out infinite;
+}
+
+.paws span:nth-child(2) { animation-delay: 0.3s; }
+.paws span:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes paw-step {
+  0%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
+
+.sheet {
+  border-radius: 24px 24px 0 0;
+}
+
+.facts dt {
+  white-space: nowrap;
+}
+
+.btn {
+  border-radius: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-mascot .mascot-ears,
+  .mascot-bob,
+  .mascot-sniff .mascot-nose,
+  .paws span {
+    animation: none;
+  }
+  .paws span { opacity: 0.6; }
 }
