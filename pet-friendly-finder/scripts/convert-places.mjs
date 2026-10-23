@@ -37,11 +37,11 @@ const places = [];
 const skipped = {};
 const categoryCounts = {};
 
-body.forEach((row, i) => {
+body.forEach((row) => {
   const cat = [row[columns.cat1], row[columns.cat2], row[columns.cat3]].filter(Boolean).join(' > ');
   categoryCounts[cat] = (categoryCounts[cat] ?? 0) + 1;
 
-  const { place, reason } = toPlace(row, columns, i);
+  const { place, reason } = toPlace(row, columns);
   if (place) places.push(place);
   else skipped[reason] = (skipped[reason] ?? 0) + 1;
 });

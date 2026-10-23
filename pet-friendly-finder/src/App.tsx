@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DogSizeSheet } from './components/DogSizeSheet';
 import { KakaoMap } from './components/KakaoMap';
 import { Mascot } from './components/Mascot';
 import { PlaceDetail } from './components/PlaceDetail';
 import { PlaceSearch } from './components/PlaceSearch';
 import { SubmitPlaceSheet } from './components/SubmitPlaceSheet';
+import { Environment } from '@apps-in-toss/web-framework';
 import { useBackHandler } from './lib/back';
+import { DOG_SIZE_LABEL, fitsDog, useDogSize } from './lib/dogSize';
 import { distanceMeters, formatDistance } from './lib/geo';
 import { getMyLocation, hasLocationPermission, REGIONS, regionLocation, type LocationResult } from './lib/location';
 import { useFavorites } from './lib/favorites';
 import { loadPlacesNear, type PlacesResult } from './lib/places';
 import { requirementsOf } from './lib/requirements';
 import { shortAreaLabel, type AreaHit, type PlaceHit } from './lib/search';
+import { parseSharedPlace, type SharedPlace } from './lib/share';
 import { reportingEnabled } from './lib/reports';
 import { PET_AREA_ICON, PET_AREA_LABEL } from './labels';
 import type { Category, PlaceWithDistance } from './types';
@@ -25,7 +29,11 @@ const LIST_LIMIT = 100;
 type CategoryFilter = 'all' | Category;
 
 export default function App() {
-  const [location, setLocation] = useState<LocationResult | null>(null);
+  /** 공유 링크로 열렸으면 그 가게 (처음 한 번만 읽어요) */
+  const [sharedAtStart] = useState(readSharedPlace);
+  const [location, setLocation] = useState<LocationResult | null>(() =>
+    sharedAtStart ? { coords: sharedAtStart.coords, source: 'region', denied: false, label: '공유받은 곳 근처' } : null,
+  );
   /**
    * 지역 선택 화면
    * - initial: 처음 화면(여기서 뒤로가기 = 미니앱 종료)
@@ -34,10 +42,11 @@ export default function App() {
   const [pickerMode, setPickerMode] = useState<'initial' | 'change' | null>(null);
   /** 처음 지역 선택 화면에서 골라 목록으로 넘어왔는지 (뒤로가기 = 지역 선택으로 돌아가기) */
   const [fromInitialPicker, setFromInitialPicker] = useState(false);
-  const [locating, setLocating] = useState(true);
+  const [locating, setLocating] = useState(!sharedAtStart);
   const [radius, setRadius] = useState<number>(3000);
   const [category, setCategory] = useState<CategoryFilter>('all');
-  const [largeDogOnly, setLargeDogOnly] = useState(false);
+  const [dogSize, setDogSize] = useDogSize();
+  const [sizeSheet, setSizeSheet] = useState(false);
   const [indoorOnly, setIndoorOnly] = useState(false);
   const [view, setView] = useState<'list' | 'map'>('list');
   /** 상세를 연 장소 (찜 해제 등으로 목록에서 빠져도 시트가 갑자기 닫히지 않게 통째로 기억해요) */
@@ -80,7 +89,7 @@ export default function App() {
   );
 
   /** 검색에서 가게를 골랐을 때: 그 근처 데이터를 받은 뒤 상세를 열어요. */
-  const pendingSelectId = useRef<string | null>(null);
+  const pendingSelectId = useRef<string | null>(sharedAtStart?.id ?? null);
 
   const chooseArea = useCallback(
     (area: AreaHit) => chooseRegion({ label: shortAreaLabel(area.label), coords: area.coords }),
@@ -104,9 +113,12 @@ export default function App() {
   useBackHandler(pickerMode === 'change', () => setPickerMode(null));
   useBackHandler(selected !== null, () => setSelected(null));
   useBackHandler(submitting, () => setSubmitting(false));
+  useBackHandler(sizeSheet, () => setSizeSheet(false));
 
-  // 이미 위치를 허용한 사용자만 바로 위치를 받아요. 처음이면 설명 화면부터 보여줘요.
+  // 공유 링크로 들어왔으면 그 가게 근처로 바로 가서 상세를 열어요.
+  // 아니면: 이미 위치를 허용한 사용자만 바로 위치를 받고, 처음이면 설명 화면부터 보여줘요.
   useEffect(() => {
+    if (sharedAtStart) return;
     hasLocationPermission().then((allowed) => {
       if (allowed) {
         getMyLocation().then((result) => {
@@ -118,7 +130,7 @@ export default function App() {
         setPickerMode('initial');
       }
     });
-  }, []);
+  }, [sharedAtStart]);
 
   // 위치가 정해지면 가장 넓은 반경 기준으로 한 번 불러오고, 반경 변경은 화면에서 거르기만 해요.
   useEffect(() => {
@@ -147,10 +159,11 @@ export default function App() {
       .map((p) => ({ ...p, distanceM: distanceMeters(location.coords, p) }))
       .filter((p) => showFavorites || p.distanceM <= radius)
       .filter((p) => category === 'all' || p.category === category)
-      .filter((p) => !largeDogOnly || p.largeDogOk)
+      // 우리 아이 크기를 정했으면 확실히 못 들어가는 곳만 빼요. (정보 없는 곳은 '크기 문의'로 남겨요)
+      .filter((p) => !dogSize || fitsDog(p, dogSize) !== 'no')
       .filter((p) => !indoorOnly || p.petArea === 'indoor')
       .sort((a, b) => a.distanceM - b.distanceM);
-  }, [location, data, favorites, showFavorites, radius, category, largeDogOnly, indoorOnly]);
+  }, [location, data, favorites, showFavorites, radius, category, dogSize, indoorOnly]);
 
   const onToggleFavorite = (place: PlaceWithDistance) => {
     setToast(toggleFavorite(place) ? '찜했어요 ❤️' : '찜을 해제했어요');
@@ -210,7 +223,9 @@ export default function App() {
           <Chip active={category === 'all'} onClick={() => setCategory('all')}>전체</Chip>
           <Chip active={category === 'restaurant'} onClick={() => setCategory('restaurant')}>🍽 식당</Chip>
           <Chip active={category === 'cafe'} onClick={() => setCategory('cafe')}>☕ 카페</Chip>
-          <Chip active={largeDogOnly} onClick={() => setLargeDogOnly((v) => !v)}>🐕 대형견 가능</Chip>
+          <Chip active={dogSize !== null} onClick={() => setSizeSheet(true)}>
+            🐶 {dogSize ? `우리 아이: ${DOG_SIZE_LABEL[dogSize]}` : '우리 아이 크기'}
+          </Chip>
           <Chip active={indoorOnly} onClick={() => setIndoorOnly((v) => !v)}>🏠 실내 동반</Chip>
         </div>
       </div>
@@ -307,7 +322,15 @@ export default function App() {
                     <span className={`tag tag-${p.petArea}`}>
                       {PET_AREA_ICON[p.petArea]} {PET_AREA_LABEL[p.petArea]}
                     </span>
-                    {p.largeDogOk && <span className="tag tag-large">🐕 대형견 OK</span>}
+                    {dogSize ? (
+                      fitsDog(p, dogSize) === 'yes' ? (
+                        <span className="tag tag-large">🐶 우리 아이 OK</span>
+                      ) : (
+                        <span className="tag tag-ask">📏 크기 문의</span>
+                      )
+                    ) : (
+                      p.largeDogOk && <span className="tag tag-large">🐕 대형견 OK</span>
+                    )}
                     {requirementsOf(p)
                       // 식약처 등록 업소는 모두 '예방접종' 기준이라 카드에서는 빼고 상세에서만 보여줘요.
                       .filter((r) => !(p.official && r.key === 'vaccine'))
@@ -355,6 +378,7 @@ export default function App() {
           onToast={setToast}
         />
       )}
+      {sizeSheet && <DogSizeSheet value={dogSize} onChange={setDogSize} onClose={() => setSizeSheet(false)} />}
       {submitting && location && (
         <SubmitPlaceSheet
           coords={location.coords}
@@ -483,4 +507,17 @@ function Loading({ text }: { text: string }) {
       <p>{text}</p>
     </div>
   );
+}
+
+/** 공유 링크(intoss://...?place=..)로 열렸는지. 토스 앱은 처음 연 주소를 따로 알려줘요. */
+function readSharedPlace(): SharedPlace | null {
+  const fromPage = parseSharedPlace(window.location.search);
+  if (fromPage) return fromPage;
+  try {
+    const initial = Environment.initialURL;
+    const q = initial.indexOf('?');
+    return q >= 0 ? parseSharedPlace(initial.slice(q)) : null;
+  } catch {
+    return null;
+  }
 }

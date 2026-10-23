@@ -35,34 +35,34 @@ describe('transform', () => {
   });
 
   it('카페 행을 Place로 바꾼다', () => {
-    const { place } = toPlace(row(), columns, 7);
+    const { place } = toPlace(row(), columns);
     expect(place).toEqual({
-      id: 'kcisa-7', name: '테스트카페', category: 'cafe', address: '서울 중구 세종대로 110',
+      id: expect.stringMatching(/^kcisa-[0-9a-z]+$/), name: '테스트카페', category: 'cafe', address: '서울 중구 세종대로 110',
       lat: 37.5665, lng: 126.978, petArea: 'indoor', largeDogOk: true, amenities: [],
       sizeNote: '모두 가능', restriction: '목줄 착용', phone: '02-000-0000', verifiedAt: '2025-03-24',
     });
   });
 
   it('카테고리2가 "반려동물식당카페"여도 카테고리3으로 식당을 구분한다', () => {
-    const { place } = toPlace(row({ 카테고리2: '반려동물식당카페', 카테고리3: '식당' }), columns, 0);
+    const { place } = toPlace(row({ 카테고리2: '반려동물식당카페', 카테고리3: '식당' }), columns);
     expect(place.category).toBe('restaurant');
   });
 
   it('고양이·라쿤 카페는 빼고, 강아지와 함께인 곳은 남긴다', () => {
     for (const n of ['고양이다락방 신촌점', '2Cats', '야옹야옹캣카페', '라쿤카페 꾸꾸네', '똥꼬냥']) expect(isAnimalCafe(n)).toBe(true);
     for (const n of ['냥냥댕댕 카페 수제간식', '애니멀 패밀리 반려견카페', '사직커피', '카페 구할구 남산']) expect(isAnimalCafe(n)).toBe(false);
-    expect(toPlace(row({ 시설명: '고양이정원' }), columns, 0).reason).toBe('animalCafe');
+    expect(toPlace(row({ 시설명: '고양이정원' }), columns).reason).toBe('animalCafe');
   });
 
   it('"제한사항 없음"은 비운다', () => {
-    const { place } = toPlace(row({ '반려동물 제한사항': '제한사항 없음' }), columns, 0);
+    const { place } = toPlace(row({ '반려동물 제한사항': '제한사항 없음' }), columns);
     expect(place.restriction).toBeUndefined();
   });
 
   it('식당·카페가 아니거나 동반 불가·좌표 이상이면 제외', () => {
-    expect(toPlace(row({ 카테고리2: '동물병원', 카테고리3: '동물병원' }), columns, 0).reason).toBe('category');
-    expect(toPlace(row({ '반려동물 동반 가능정보': 'N' }), columns, 0).reason).toBe('notAllowed');
-    expect(toPlace(row({ 위도: '0' }), columns, 0).reason).toBe('coords');
+    expect(toPlace(row({ 카테고리2: '동물병원', 카테고리3: '동물병원' }), columns).reason).toBe('category');
+    expect(toPlace(row({ '반려동물 동반 가능정보': 'N' }), columns).reason).toBe('notAllowed');
+    expect(toPlace(row({ 위도: '0' }), columns).reason).toBe('coords');
   });
 
   it('분류·크기·범위 규칙', () => {

@@ -922,3 +922,28 @@ main {
   font-size: 14px;
   color: var(--muted);
 }
+
+/* ---------- 우리 아이 크기 ---------- */
+
+.size-options .option {
+  align-items: center;
+  text-align: left;
+  background: var(--surface);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.size-options .muted {
+  font-size: 13px;
+}
+
+.size-icon {
+  font-size: 26px;
+  width: 36px;
+  text-align: center;
+}
+
+.tag-ask {
+  background: #f2f4f6;
+  color: var(--muted);
+}

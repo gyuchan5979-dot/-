@@ -1,49 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Storage } from '@apps-in-toss/web-framework';
+import { readItem, writeItem } from './storage';
 import type { Place } from '../types';
 
 // 찜한 장소. 기기에만 저장하고 서버로 보내지 않아요.
-// 토스 앱에서는 앱인토스 Storage(앱을 지워도 토스에 남아요), 브라우저에서는 localStorage를 써요.
+// 저장은 lib/storage.ts (토스 앱: 앱인토스 Storage, 브라우저: localStorage).
 // 다른 지역에서도 목록을 보여줄 수 있게 장소 정보를 통째로 저장해요.
 
 const KEY = 'favorites.v1';
 /** 너무 커지지 않게 최대 개수 */
 export const MAX_FAVORITES = 200;
-
-function isTossWebView(): boolean {
-  return typeof window !== 'undefined' && (window as { ReactNativeWebView?: unknown }).ReactNativeWebView != null;
-}
-
-async function read(): Promise<string | null> {
-  if (isTossWebView()) {
-    try {
-      return await Storage.getItem(KEY);
-    } catch {
-      return null;
-    }
-  }
-  try {
-    return localStorage.getItem(KEY);
-  } catch {
-    return null;
-  }
-}
-
-async function write(value: string): Promise<void> {
-  if (isTossWebView()) {
-    try {
-      await Storage.setItem(KEY, value);
-    } catch {
-      // 저장 실패해도 이번 실행 동안은 화면에 반영돼 있어요.
-    }
-    return;
-  }
-  try {
-    localStorage.setItem(KEY, value);
-  } catch {
-    // 사생활 보호 모드 등
-  }
-}
 
 export function parseFavorites(raw: string | null): Place[] {
   if (!raw) return [];
@@ -67,7 +32,7 @@ export function useFavorites() {
   const [favorites, setFavorites] = useState<Place[]>([]);
 
   useEffect(() => {
-    read().then((raw) => setFavorites(parseFavorites(raw)));
+    readItem(KEY).then((raw) => setFavorites(parseFavorites(raw)));
   }, []);
 
   /** 찜을 추가했으면 true, 해제했으면 false */
@@ -75,7 +40,7 @@ export function useFavorites() {
     (place: Place): boolean => {
       const next = toggleFavorite(favorites, place);
       setFavorites(next);
-      void write(JSON.stringify(next));
+      void writeItem(KEY, JSON.stringify(next));
       return !favorites.some((p) => p.id === place.id);
     },
     [favorites],

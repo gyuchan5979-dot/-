@@ -4,6 +4,7 @@ import { formatDistance } from '../lib/geo';
 import { openExternal } from '../lib/location';
 import { kakaoDirectionsUrl, naverDirectionsUrl } from '../lib/mapLinks';
 import { requirementsOf } from '../lib/requirements';
+import { sharePlace } from '../lib/share';
 import { REPORT_KIND_LABEL, reportPlace, reportingEnabled, type ReportKind, type SubmitResult } from '../lib/reports';
 import type { PlaceWithDistance } from '../types';
 import { PET_AREA_ICON, PET_AREA_LABEL, SOURCE_LABEL } from '../labels';
@@ -52,6 +53,17 @@ export function PlaceDetail({ place, favorite, onToggleFavorite, onClose, onToas
           onClick={onToggleFavorite}
         >
           {favorite ? '❤️ 찜했어요' : '🤍 찜하기'}
+        </button>
+        <button
+          type="button"
+          className="btn quick"
+          onClick={async () => {
+            const result = await sharePlace(place);
+            if (result === 'copied') onToast('공유할 내용을 복사했어요 📋');
+            else if (result === 'failed') onToast('공유하지 못했어요. 잠시 후 다시 시도해 주세요.');
+          }}
+        >
+          📤 공유
         </button>
         {place.phone && (
           <button type="button" className="btn quick" onClick={() => openExternal(`tel:${place.phone!.replace(/[^0-9+]/g, '')}`)}>

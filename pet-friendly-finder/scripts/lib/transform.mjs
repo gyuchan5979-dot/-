@@ -114,7 +114,7 @@ const clean = (v) => {
  * CSV 한 줄 → Place. 식당·카페가 아니거나, 동반 불가이거나, 좌표가 이상하면 null.
  * @returns {{ place: object | null, reason?: string }}
  */
-export function toPlace(row, columns, index) {
+export function toPlace(row, columns) {
   const get = (field) => (columns[field] === undefined ? undefined : row[columns[field]]);
 
   // 카테고리2가 "반려동물식당카페"처럼 둘 다 담고 있어서, 가장 구체적인 카테고리3부터 봐요.
@@ -135,7 +135,8 @@ export function toPlace(row, columns, index) {
   const restriction = clean(get('restriction'));
   return {
     place: {
-      id: `kcisa-${index}`,
+      // 데이터를 다시 받아도 같은 가게는 같은 id (찜·공유 링크가 깨지지 않게)
+      id: `kcisa-${stableHash(`${name}|${clean(get('roadAddress')) ?? clean(get('jibunAddress')) ?? ''}`)}`,
       name,
       category,
       address: clean(get('roadAddress')) ?? clean(get('jibunAddress')) ?? '',
@@ -154,6 +155,13 @@ export function toPlace(row, columns, index) {
       ...(normalizeDate(get('updatedAt')) && { verifiedAt: normalizeDate(get('updatedAt')) }),
     },
   };
+}
+
+/** 짧은 문자열 해시 (id용) */
+export function stableHash(text) {
+  let h = 0;
+  for (const ch of text) h = (Math.imul(h, 31) + ch.codePointAt(0)) | 0;
+  return (h >>> 0).toString(36);
 }
 
 /** 좌표 → 격자 키. 예: (37.56, 126.97) → "375_1269" */
