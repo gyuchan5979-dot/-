@@ -70,3 +70,17 @@ describe('출처 합치기', () => {
     ]);
   });
 });
+
+describe('같은 가게 정보 채우기', () => {
+  it('식약처 업소의 빈 칸을 다른 출처 정보로 채운다', async () => {
+    const { mergeSources } = await import('../lib/grid.mjs');
+    const fsk = { name: '사직커피', lat: 37.5757, lng: 126.9688, largeDogOk: false, sizeNote: '가게에 문의', restriction: '예방접종 필수', amenities: [] };
+    const kcisa = { name: '사직커피', lat: 37.5758, lng: 126.9689, largeDogOk: true, sizeNote: '모두 가능', restriction: '목줄 필수', phone: '02-000-0000', hours: '매일 10:00~20:00', closedDays: '연중무휴', parking: false, amenities: [] };
+    const { places } = mergeSources([{ name: 'fsk', places: [fsk] }, { name: 'kcisa', places: [kcisa] }]);
+    expect(places).toHaveLength(1);
+    expect(places[0]).toMatchObject({
+      source: 'fsk', phone: '02-000-0000', hours: '매일 10:00~20:00', closedDays: '연중무휴', parking: false,
+      sizeNote: '모두 가능', largeDogOk: true, restriction: '목줄 필수 · 예방접종 필수',
+    });
+  });
+});

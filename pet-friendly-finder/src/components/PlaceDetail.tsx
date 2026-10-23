@@ -3,6 +3,7 @@ import { useBackHandler } from '../lib/back';
 import { formatDistance } from '../lib/geo';
 import { openExternal } from '../lib/location';
 import { kakaoDirectionsUrl, naverDirectionsUrl } from '../lib/mapLinks';
+import { requirementsOf } from '../lib/requirements';
 import { REPORT_KIND_LABEL, reportPlace, reportingEnabled, type ReportKind, type SubmitResult } from '../lib/reports';
 import type { PlaceWithDistance } from '../types';
 import { PET_AREA_ICON, PET_AREA_LABEL, SOURCE_LABEL } from '../labels';
@@ -10,11 +11,14 @@ import { Sheet } from './Sheet';
 
 interface Props {
   place: PlaceWithDistance;
+  favorite: boolean;
+  onToggleFavorite: () => void;
   onClose: () => void;
   onToast: (message: string) => void;
 }
 
-export function PlaceDetail({ place, onClose, onToast }: Props) {
+export function PlaceDetail({ place, favorite, onToggleFavorite, onClose, onToast }: Props) {
+  const requirements = requirementsOf(place);
   const [reporting, setReporting] = useState(false);
   // 신고 화면에서 뒤로가기 → 가게 상세로 돌아가기
   useBackHandler(reporting, () => setReporting(false));
@@ -40,10 +44,39 @@ export function PlaceDetail({ place, onClose, onToast }: Props) {
         {place.category === 'cafe' ? '카페' : '식당'} · {formatDistance(place.distanceM)} · {place.address}
       </p>
 
+      <div className="quick-actions">
+        <button
+          type="button"
+          className={`btn quick${favorite ? ' is-on' : ''}`}
+          aria-pressed={favorite}
+          onClick={onToggleFavorite}
+        >
+          {favorite ? '❤️ 찜했어요' : '🤍 찜하기'}
+        </button>
+        {place.phone && (
+          <button type="button" className="btn quick" onClick={() => openExternal(`tel:${place.phone!.replace(/[^0-9+]/g, '')}`)}>
+            📞 전화하기
+          </button>
+        )}
+      </div>
+
       {place.official && (
         <p className="official-note">
           ✓ 식약처 「반려동물 동반출입 음식점」으로 지자체에 등록된 곳이에요.
         </p>
+      )}
+
+      {requirements.length > 0 && (
+        <div className="bring">
+          <p className="bring-title">🎒 방문 전에 챙겨요</p>
+          <div className="tags">
+            {requirements.map((r) => (
+              <span key={r.key} className="tag tag-req">
+                {r.icon} {r.label}
+              </span>
+            ))}
+          </div>
+        </div>
       )}
 
       <dl className="facts">
@@ -65,6 +98,24 @@ export function PlaceDetail({ place, onClose, onToast }: Props) {
           <div>
             <dt>🥣 편의</dt>
             <dd>{place.amenities.join(', ')}</dd>
+          </div>
+        )}
+        {place.hours && (
+          <div>
+            <dt>⏰ 영업시간</dt>
+            <dd>{place.hours}</dd>
+          </div>
+        )}
+        {place.closedDays && (
+          <div>
+            <dt>💤 휴무일</dt>
+            <dd>{place.closedDays}</dd>
+          </div>
+        )}
+        {place.parking !== undefined && (
+          <div>
+            <dt>🅿️ 주차</dt>
+            <dd>{place.parking ? '가능' : '불가'}</dd>
           </div>
         )}
         <div>

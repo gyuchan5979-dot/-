@@ -26,6 +26,9 @@ const COLUMN_CANDIDATES = {
   indoor: ['장소실내여부'],
   outdoor: ['장소실외여부'],
   updatedAt: ['최종작성일'],
+  hours: ['운영시간'],
+  closedDays: ['휴무일'],
+  parking: ['주차가능여부'],
 };
 
 /** CSV 헤더 → { 필드: 컬럼 인덱스 } */
@@ -143,6 +146,9 @@ export function toPlace(row, columns, index) {
       ...(clean(get('sizeAllowed')) && { sizeNote: clean(get('sizeAllowed')) }),
       ...(restriction && { restriction }),
       ...(clean(get('phone')) && { phone: clean(get('phone')) }),
+      ...(clean(get('hours')) && { hours: clean(get('hours')) }),
+      ...(clean(get('closedDays')) && { closedDays: clean(get('closedDays')) }),
+      ...(yes(get('parking')) ? { parking: true } : no(get('parking')) ? { parking: false } : {}),
       ...(normalizeDate(get('updatedAt')) && { verifiedAt: normalizeDate(get('updatedAt')) }),
     },
   };

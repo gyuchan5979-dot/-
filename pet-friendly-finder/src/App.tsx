@@ -6,7 +6,9 @@ import { SubmitPlaceSheet } from './components/SubmitPlaceSheet';
 import { useBackHandler } from './lib/back';
 import { distanceMeters, formatDistance } from './lib/geo';
 import { getMyLocation, hasLocationPermission, REGIONS, regionLocation, type LocationResult } from './lib/location';
+import { useFavorites } from './lib/favorites';
 import { loadPlacesNear, type PlacesResult } from './lib/places';
+import { requirementsOf } from './lib/requirements';
 import { reportingEnabled } from './lib/reports';
 import { PET_AREA_ICON, PET_AREA_LABEL } from './labels';
 import type { Category, PlaceWithDistance } from './types';
@@ -36,7 +38,11 @@ export default function App() {
   const [largeDogOnly, setLargeDogOnly] = useState(false);
   const [indoorOnly, setIndoorOnly] = useState(false);
   const [view, setView] = useState<'list' | 'map'>('list');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  /** 상세를 연 장소 (찜 해제 등으로 목록에서 빠져도 시트가 갑자기 닫히지 않게 통째로 기억해요) */
+  const [selected, setSelected] = useState<PlaceWithDistance | null>(null);
+  const selectedId = selected?.id ?? null;
+  const [showFavorites, setShowFavorites] = useState(false);
+  const { favorites, toggle: toggleFavorite, isFavorite } = useFavorites();
   const [data, setData] = useState<PlacesResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -77,7 +83,7 @@ export default function App() {
     setPickerMode('initial');
   });
   useBackHandler(pickerMode === 'change', () => setPickerMode(null));
-  useBackHandler(selectedId !== null, () => setSelectedId(null));
+  useBackHandler(selected !== null, () => setSelected(null));
   useBackHandler(submitting, () => setSubmitting(false));
 
   // 이미 위치를 허용한 사용자만 바로 위치를 받아요. 처음이면 설명 화면부터 보여줘요.
@@ -108,16 +114,21 @@ export default function App() {
   }, [location]);
 
   const places = useMemo<PlaceWithDistance[]>(() => {
-    if (!location || !data) return [];
-    return data.places.map((p) => ({ ...p, distanceM: distanceMeters(location.coords, p) }))
-      .filter((p) => p.distanceM <= radius)
+    if (!location) return [];
+    // 찜 목록은 거리와 상관없이 다 보여줘요.
+    const base = showFavorites ? favorites : (data?.places ?? []);
+    return base
+      .map((p) => ({ ...p, distanceM: distanceMeters(location.coords, p) }))
+      .filter((p) => showFavorites || p.distanceM <= radius)
       .filter((p) => category === 'all' || p.category === category)
       .filter((p) => !largeDogOnly || p.largeDogOk)
       .filter((p) => !indoorOnly || p.petArea === 'indoor')
       .sort((a, b) => a.distanceM - b.distanceM);
-  }, [location, data, radius, category, largeDogOnly, indoorOnly]);
+  }, [location, data, favorites, showFavorites, radius, category, largeDogOnly, indoorOnly]);
 
-  const selected = places.find((p) => p.id === selectedId) ?? null;
+  const onToggleFavorite = (place: PlaceWithDistance) => {
+    setToast(toggleFavorite(place) ? '찜했어요 ❤️' : '찜을 해제했어요');
+  };
 
   return (
     <div className="app">
@@ -150,8 +161,18 @@ export default function App() {
       {location && (
       <div className="filters">
         <div className="chips" role="group" aria-label="반경">
+          <Chip active={showFavorites} onClick={() => setShowFavorites((v) => !v)}>
+            ❤️ 찜한 곳{favorites.length > 0 ? ` ${favorites.length}` : ''}
+          </Chip>
           {RADIUS_OPTIONS.map((r) => (
-            <Chip key={r} active={radius === r} onClick={() => setRadius(r)}>
+            <Chip
+              key={r}
+              active={!showFavorites && radius === r}
+              onClick={() => {
+                setShowFavorites(false);
+                setRadius(r);
+              }}
+            >
               {r / 1000}km
             </Chip>
           ))}
@@ -178,8 +199,16 @@ export default function App() {
       )}
       {!MAP_ENABLED && data && location && (
         <p className="result-count">
-          🐶 {location.label ?? '내 주변'} {radius / 1000}km 안에 <strong>{places.length}곳</strong>
-          {places.length > 0 ? ' 있어요!' : ''}
+          {showFavorites ? (
+            <>
+              ❤️ 찜한 곳 <strong>{places.length}곳</strong>
+            </>
+          ) : (
+            <>
+              🐶 {location.label ?? '내 주변'} {radius / 1000}km 안에 <strong>{places.length}곳</strong>
+              {places.length > 0 ? ' 있어요!' : ''}
+            </>
+          )}
         </p>
       )}
 
@@ -193,8 +222,17 @@ export default function App() {
             center={location.coords}
             places={places}
             selectedId={selectedId}
-            onSelect={setSelectedId}
+            onSelect={(id) => setSelected(places.find((p) => p.id === id) ?? null)}
           />
+        ) : places.length === 0 && showFavorites ? (
+          <div className="empty">
+            <Mascot size={88} />
+            <p>
+              {favorites.length === 0 ? '아직 찜한 곳이 없어요.' : '조건에 맞는 찜한 곳이 없어요.'}
+              <br />
+              마음에 드는 가게를 눌러 ❤️ 찜해 보세요!
+            </p>
+          </div>
         ) : places.length === 0 ? (
           <div className="empty">
             <Mascot size={88} mood="sad" />
@@ -220,13 +258,16 @@ export default function App() {
           <ul className="list">
             {places.slice(0, LIST_LIMIT).map((p) => (
               <li key={p.id}>
-                <button type="button" className="card" onClick={() => setSelectedId(p.id)}>
+                <button type="button" className="card" onClick={() => setSelected(p)}>
                   <span className={`card-icon card-icon-${p.category}`} aria-hidden="true">
                     {p.category === 'cafe' ? '☕' : '🍽️'}
                   </span>
                   <div className="card-body">
                   <div className="card-top">
-                    <span className="card-name">{p.name}</span>
+                    <span className="card-name">
+                      {isFavorite(p.id) && <span className="card-fav" aria-label="찜한 곳">❤️ </span>}
+                      {p.name}
+                    </span>
                     <span className="card-dist">{formatDistance(p.distanceM)}</span>
                   </div>
                   <div className="card-meta">
@@ -238,6 +279,15 @@ export default function App() {
                       {PET_AREA_ICON[p.petArea]} {PET_AREA_LABEL[p.petArea]}
                     </span>
                     {p.largeDogOk && <span className="tag tag-large">🐕 대형견 OK</span>}
+                    {requirementsOf(p)
+                      // 식약처 등록 업소는 모두 '예방접종' 기준이라 카드에서는 빼고 상세에서만 보여줘요.
+                      .filter((r) => !(p.official && r.key === 'vaccine'))
+                      .slice(0, 2)
+                      .map((r) => (
+                        <span key={r.key} className="tag tag-req">
+                          {r.icon} {r.label}
+                        </span>
+                      ))}
                     {p.amenities.slice(0, 2).map((a) => (
                       <span key={a} className="tag">{a}</span>
                     ))}
@@ -267,7 +317,15 @@ export default function App() {
       </footer>
       )}
 
-      {selected && <PlaceDetail place={selected} onClose={() => setSelectedId(null)} onToast={setToast} />}
+      {selected && (
+        <PlaceDetail
+          place={selected}
+          favorite={isFavorite(selected.id)}
+          onToggleFavorite={() => onToggleFavorite(selected)}
+          onClose={() => setSelected(null)}
+          onToast={setToast}
+        />
+      )}
       {submitting && location && (
         <SubmitPlaceSheet
           coords={location.coords}

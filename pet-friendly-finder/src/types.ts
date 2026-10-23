@@ -15,6 +15,12 @@ export interface Place {
   /** 물그릇, 펫메뉴 등 반려견 편의 */
   amenities: string[];
   phone?: string;
+  /** 영업시간 (예: "매일 11:00~21:00") */
+  hours?: string;
+  /** 휴무일 (예: "매주 월요일", "연중무휴") */
+  closedDays?: string;
+  /** 주차 가능 여부 (모르면 없음) */
+  parking?: boolean;
   /** 원본 데이터의 「입장 가능 동물 크기」 문구 */
   sizeNote?: string;
   /** 원본 데이터의 「반려동물 제한사항」 문구 */

@@ -785,3 +785,53 @@ main {
   }
   .paws span { opacity: 0.6; }
 }
+
+/* ---------- 찜·전화·필요사항 ---------- */
+
+.quick-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn.quick {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 15px;
+  background: var(--cream);
+  border-color: #f3e3cc;
+}
+
+.btn.quick.is-on {
+  background: #ffe9ec;
+  border-color: #ffc9d1;
+  color: #d6336c;
+}
+
+.bring {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--butter);
+  border-radius: 14px;
+}
+
+.bring-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5b4320;
+}
+
+.bring .tags {
+  margin-top: 0;
+}
+
+.tag-req {
+  background: #fff;
+  color: #5b4320;
+  border: 1px solid #f1dfb8;
+}
+
+.card-fav {
+  font-size: 14px;
+}
