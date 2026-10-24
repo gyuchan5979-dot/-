@@ -1,0 +1,352 @@
+:root {
+  --bg: #fbf6ec;
+  --surface: #ffffff;
+  --text: #2b2620;
+  --muted: #8a7d69;
+  --border: #e9dfcc;
+  --accent: #8b6b3e;
+  --accent-soft: #f3e9d6;
+  --serif: 'Nanum Myeongjo', 'AppleMyungjo', 'Noto Serif KR', serif;
+  color-scheme: light;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', Pretendard, 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.top h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.streak {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin: 16px 0 20px;
+  background: var(--accent-soft);
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.tabs button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: 10px 0;
+  border-radius: 9px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.tabs button.is-active {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(80, 60, 30, 0.12);
+}
+
+main {
+  flex: 1;
+}
+
+.line-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(120, 90, 40, 0.08);
+}
+
+.line-date {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.line-text {
+  margin: 28px 0;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.8;
+  white-space: pre-line;
+  word-break: keep-all;
+}
+
+.line-text.small {
+  margin: 12px 0 16px;
+  font-size: 19px;
+  text-align: center;
+}
+
+.line-by {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 15px;
+  color: #6b5e4b;
+  text-align: center;
+}
+
+.line-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.thought {
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.actions button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 14px;
+  font-size: 13px;
+}
+
+.actions button span {
+  font-size: 20px;
+}
+
+.actions button.is-on {
+  border-color: #f2b8b5;
+  background: #fff5f4;
+}
+
+.primary {
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: 14px;
+}
+
+.wide {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.streak-note {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  word-break: keep-all;
+}
+
+.section-desc {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--muted);
+  word-break: keep-all;
+}
+
+.day-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.day-row {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.day-row.is-locked {
+  background: transparent;
+  border-style: dashed;
+}
+
+.day-row:disabled {
+  opacity: 0.6;
+}
+
+.day-date {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.day-preview {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.is-locked .day-preview {
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+.day-by {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.empty {
+  text-align: center;
+  padding: 48px 0 24px;
+}
+
+.empty p {
+  margin: 4px 0;
+}
+
+.empty-icon {
+  font-size: 40px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.footer {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 10;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+}
+
+.sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin: 0 auto 16px;
+}
+
+.sheet h2 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--muted);
+  text-align: center;
+  font-weight: 400;
+}
+
+.ad-slot {
+  /* 광고가 그려지기 전에는 높이 0 (display:none이면 SDK가 크기를 못 재요) */
+  height: 0;
+  overflow: hidden;
+}
+
+.ad-slot.is-shown {
+  height: 96px;
+}
+
+.ad-banner {
+  width: 100%;
+  height: 96px;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: rgba(43, 38, 32, 0.92);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  z-index: 20;
+  max-width: calc(100% - 32px);
+  text-align: center;
+}
