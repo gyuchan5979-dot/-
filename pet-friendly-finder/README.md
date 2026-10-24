@@ -39,8 +39,8 @@ npm run dev
 ```
 
 - 토스 앱 안에서는 앱인토스 SDK `Device.getLocation`으로 위치를 받고, 일반 브라우저에서는 브라우저 위치 권한을 써요. 둘 다 안 되면 서울시청 기준으로 보여줘요.
-- 카카오맵 키가 없으면 지도 탭에 안내 문구만 나오고, 목록 기능은 그대로 동작해요.
-- 카카오 개발자 콘솔에서 JavaScript 키의 사이트 도메인에 `http://localhost:5173`과 실제 서비스 도메인을 등록해야 지도가 떠요.
+- 카카오맵 JavaScript 키는 `.env.production`에 들어 있어요(공개용 키, 카카오 콘솔에 등록한 토스 도메인에서만 동작). 키가 없으면 지도 탭이 숨겨지고 목록만 보여요.
+- 카카오 콘솔에 등록된 도메인: `https://pet-friendly-finder.apps.tossmini.com`(실서비스), `https://pet-friendly-finder.private-apps.tossmini.com`(토스앱 테스트). 로컬(localhost)에서는 지도가 뜨지 않아요(필요하면 개발용으로 `http://localhost:5173`을 추가 등록).
 
 ## 식약처 등록 업소 (가장 최신·공식)
 

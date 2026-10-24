@@ -284,21 +284,32 @@ main {
 }
 
 .map-pin {
+  width: 34px;
+  height: 34px;
+  padding: 0;
   border: 2px solid #fff;
-  background: var(--surface);
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  width: 36px;
-  height: 36px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  box-shadow: var(--shadow);
-  font-size: 16px;
-  padding: 0;
+  font-size: 17px;
+  box-shadow: 0 2px 6px rgba(122, 84, 46, 0.35);
+  transition: transform 0.12s ease;
+}
+
+.map-pin-cafe {
+  background: #ffd94a;
+}
+
+.map-pin-restaurant {
+  background: #ffb38a;
 }
 
 .map-pin.is-selected {
-  background: var(--primary);
+  transform: scale(1.35);
+  border-color: var(--primary);
+  border-width: 3px;
+  position: relative;
+  z-index: 2;
 }
 
 .footer {
@@ -946,4 +957,15 @@ main {
 .tag-ask {
   background: #f2f4f6;
   color: var(--muted);
+}
+
+/* 카카오맵이 핀마다 감싸는 투명한 상자가 옆 핀의 탭을 가로채지 않게 */
+.map div:has(> .map-pin),
+.map div:has(> .map-me) {
+  pointer-events: none;
+}
+
+.map-pin {
+  pointer-events: auto;
+  cursor: pointer;
 }

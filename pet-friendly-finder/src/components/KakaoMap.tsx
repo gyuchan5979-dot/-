@@ -23,6 +23,9 @@ interface KakaoMaps {
     content: HTMLElement;
     map?: KakaoMapInstance;
     yAnchor?: number;
+    /** true면 지도가 이 요소의 탭을 가로채지 않아요 */
+    clickable?: boolean;
+    zIndex?: number;
   }) => KakaoMarker;
   event: { addListener(target: unknown, type: string, handler: () => void): void };
 }
@@ -39,6 +42,8 @@ let sdkPromise: Promise<KakaoMaps> | null = null;
 function loadKakaoSdk(appKey: string): Promise<KakaoMaps> {
   if (sdkPromise) return sdkPromise;
   sdkPromise = new Promise((resolve, reject) => {
+    // SDK가 이어서 받는 파일이 막히면 콜백이 영영 안 올 수 있어서, 10초 넘으면 실패로 봐요.
+    const timer = setTimeout(() => reject(new Error('kakao maps load timeout')), 10_000);
     const script = document.createElement('script');
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(appKey)}&autoload=false`;
     script.onload = () => {
@@ -47,7 +52,10 @@ function loadKakaoSdk(appKey: string): Promise<KakaoMaps> {
         reject(new Error('kakao maps not available'));
         return;
       }
-      maps.load(() => resolve(maps));
+      maps.load(() => {
+        clearTimeout(timer);
+        resolve(maps);
+      });
     };
     script.onerror = () => reject(new Error('kakao maps script failed to load'));
     document.head.appendChild(script);
@@ -91,6 +99,14 @@ export function KakaoMap({ center, places, selectedId, onSelect }: Props) {
     };
   }, []);
 
+  // 핀을 누를 때마다 지도가 다시 맞춰지지 않게, 최신 onSelect는 ref로 들고 있어요.
+  const onSelectRef = useRef(onSelect);
+  useEffect(() => {
+    onSelectRef.current = onSelect;
+  });
+  const pinsRef = useRef(new Map<string, HTMLButtonElement>());
+
+  // 장소 목록이나 기준 위치가 바뀔 때만 핀을 다시 그리고 지도를 맞춰요.
   useEffect(() => {
     const ctx = mapRef.current;
     if (status !== 'ready' || !ctx) return;
@@ -105,31 +121,38 @@ export function KakaoMap({ center, places, selectedId, onSelect }: Props) {
     meDot.className = 'map-me';
     overlays.push(new maps.CustomOverlay({ position: me, content: meDot, map }));
 
+    const pins = pinsRef.current;
+    pins.clear();
     for (const p of places) {
       const pos = new maps.LatLng(p.lat, p.lng);
       bounds.extend(pos);
       const pin = document.createElement('button');
       pin.type = 'button';
-      pin.className = `map-pin${p.id === selectedId ? ' is-selected' : ''}`;
-      pin.textContent = p.category === 'cafe' ? '☕' : '🍽';
+      pin.className = `map-pin map-pin-${p.category}`;
+      pin.textContent = p.category === 'cafe' ? '☕' : '🍽️';
       pin.title = p.name;
-      pin.onclick = () => onSelect(p.id);
-      overlays.push(new maps.CustomOverlay({ position: pos, content: pin, map, yAnchor: 1 }));
+      pin.setAttribute('aria-label', p.name);
+      pin.onclick = () => onSelectRef.current(p.id);
+      pins.set(p.id, pin);
+      overlays.push(new maps.CustomOverlay({ position: pos, content: pin, map, yAnchor: 0.5, clickable: true }));
     }
 
     if (places.length > 0) map.setBounds(bounds);
     else map.setCenter(me);
 
     return () => overlays.forEach((o) => o.setMap(null));
-  }, [status, center, places, selectedId, onSelect]);
+  }, [status, center, places]);
+
+  // 고른 핀만 강조
+  useEffect(() => {
+    for (const [id, pin] of pinsRef.current) pin.classList.toggle('is-selected', id === selectedId);
+  }, [selectedId, places, status]);
 
   if (status === 'error') {
     return (
       <div className="map-placeholder">
-        <p>🗺️ 지도를 표시하려면 카카오맵 JavaScript 키가 필요해요.</p>
-        <p className="muted">
-          <code>.env.local</code>에 <code>VITE_KAKAO_MAP_KEY</code>를 넣고, 카카오 개발자 콘솔에 도메인을 등록하세요.
-        </p>
+        <p>🗺️ 지도를 불러오지 못했어요.</p>
+        <p className="muted">잠시 후 다시 시도하거나 목록 탭에서 찾아보세요.</p>
       </div>
     );
   }

@@ -241,7 +241,7 @@ export default function App() {
           </button>
         </div>
       )}
-      {!MAP_ENABLED && data && location && (
+      {data && location && (
         <p className="result-count">
           {showFavorites ? (
             <>
