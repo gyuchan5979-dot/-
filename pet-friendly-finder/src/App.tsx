@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AdBanner } from './components/AdBanner';
 import { DogSizeSheet } from './components/DogSizeSheet';
 import { KakaoMap } from './components/KakaoMap';
 import { Mascot } from './components/Mascot';
@@ -25,6 +26,8 @@ const MAP_ENABLED = Boolean(import.meta.env.VITE_KAKAO_MAP_KEY);
 const MAX_RADIUS = RADIUS_OPTIONS[RADIUS_OPTIONS.length - 1];
 /** 목록에 한 번에 그리는 최대 개수 */
 const LIST_LIMIT = 100;
+/** 배너 광고를 몇 번째 가게 다음에 넣을지 */
+const AD_AFTER = 3;
 
 type CategoryFilter = 'all' | Category;
 
@@ -300,8 +303,11 @@ export default function App() {
           </div>
         ) : (
           <ul className="list">
-            {places.slice(0, LIST_LIMIT).map((p) => (
-              <li key={p.id}>
+            {places.slice(0, LIST_LIMIT).map((p, i) => (
+              <Fragment key={p.id}>
+              {/* 배너 광고: 세 번째 가게 다음 (목록이 짧으면 맨 끝) */}
+              {i === AD_AFTER && <AdBanner />}
+              <li>
                 <button type="button" className="card" onClick={() => setSelected(p)}>
                   <span className={`card-icon card-icon-${p.category}`} aria-hidden="true">
                     {p.category === 'cafe' ? '☕' : '🍽️'}
@@ -347,7 +353,9 @@ export default function App() {
                   </div>
                 </button>
               </li>
+              </Fragment>
             ))}
+            {places.length > 0 && places.length <= AD_AFTER && <AdBanner />}
           </ul>
         )}
         {view === 'list' && places.length > LIST_LIMIT && (

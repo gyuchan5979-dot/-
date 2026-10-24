@@ -969,3 +969,20 @@ main {
   pointer-events: auto;
   cursor: pointer;
 }
+
+/* ---------- 배너 광고 ---------- */
+/* 화면 너비 그대로(목록 좌우 여백 밖으로), 광고가 그려진 뒤에만 펼쳐요. */
+.ad-slot {
+  margin: 0 -16px;
+  height: 0;
+  overflow: hidden;
+}
+
+.ad-slot.is-shown {
+  height: 96px;
+}
+
+.ad-banner {
+  width: 100%;
+  height: 96px;
+}
